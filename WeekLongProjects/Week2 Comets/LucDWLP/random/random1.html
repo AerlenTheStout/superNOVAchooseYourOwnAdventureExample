@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Draggable Fish</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #87CEEB;
+    }
+    .fish {
+      position: absolute;
+      width: 100px;
+      cursor: grab;
+      transition: transform 1s ease;
+    }
+    .fish:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    const fishSrc = 'https://th.bing.com/th/id/OIP.6DDNMjXx_lBSS1r5GP-pHQHaHa?w=193&h=193&c=7&r=0&o=5&dpr=1.5&pid=1.7';
+
+    const createFish = () => {
+      const fish = document.createElement('img');
+      fish.src = fishSrc;
+      fish.classList.add('fish');
+      document.body.appendChild(fish);
+
+      // Initial placement
+      moveFish(fish);
+
+      // Random movement
+      setInterval(() => moveFish(fish), 1000);
+
+      // Enable dragging
+      makeDraggable(fish);
+    };
+
+    const moveFish = (fish) => {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 100);
+      fish.style.transform = `translate(${x}px, ${y}px)`;
+    };
+
+    const makeDraggable = (fish) => {
+      let offsetX, offsetY, isDragging = false;
+
+      fish.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const rect = fish.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        fish.style.transform = `translate(${e.clientX - offsetX}px, ${e.clientY - offsetY}px)`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    };
+
+    // Spawn new fish every 5 seconds
+    setInterval(createFish, 5000);
+  </script>
+</body>
+</html>

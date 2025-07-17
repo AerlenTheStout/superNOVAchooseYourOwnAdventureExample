@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas{background-color: rgb(47, 89, 101); 
+        display: block;
+        margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="cookies++; counter.innerHTML = `${cookies}`"><img width="500px" height="500px" src="https://www.simplyjillicious.com/wp-content/uploads/2023/09/healthy-single-serve-cookie-recipe-5-scaled.jpg" alt="a cookie"></button>
+    <button onclick="buyUpgrade()"width="100px" height="30px">auto clicker</button>
+    <h3>cookies: <span>0</span></h3>
+<script>
+    let counter = document.getElementsByTagName("span")[0]
+    let clicker = document.getElementsByTagName("button")[0]
+    let cookies = 0
+    let HowToAdd=1
+    let upgradePurchased = 0
+    
+    function buyUpgrade(){
+        if(cookies >=50 &&upgradePurchased == 0){
+            cookies -= 50
+            HowToAdd *=2
+            upgradePurchased++
+        } else {
+            if(cookies >= upgradePurchased ** 2){
+                howMuchToAdd *= 2
+                upgradePurchased++
+                cookies -= upgradePurchased ** 2
+            }
+    
+        }
+    }
+    function autoClick(){
+        cookies += HowToAdd
+        counter.innerHTML = `${cookies}`
+    }
+    window.setInterval(autoClick, 1000)
+</script>
+</body>
+</html>

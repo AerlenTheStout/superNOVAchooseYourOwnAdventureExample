@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4e2d8;
+  text-align: center;
+  padding: 50px;
+}
+
+.game {
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  display: inline-block;
+}
+
+img#cookie {
+  width: 200px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+img#cookie:active {
+  transform: scale(0.95);
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}

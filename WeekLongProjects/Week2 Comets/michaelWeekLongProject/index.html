@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>plane clicker</title>
+</head>
+<body>
+    <h1>Welcome To Plane Clicker</h1>
+    <h2>planes : <span>0</span></h2>
+<button onclick="planes++; counter.innerHTML = `${planes}`; checkForUpgrade(); planeEmojiText.innerHTML += '✈️'"><img width="300px" src="https://img.lovepik.com/element/45012/0036.png_860.png" alt=""></button>
+<h1>get 600 planes for an upgrade!
+    get 1200 planes for a super upgrade</h1>
+<h1 id="planeEmojis"></h1>
+<body style="background-image: url('your-image.jpg'); background-size: cover; background-repeat: no-repeat;">
+    
+</body>
+<html>
+  
+    <Script>
+        let planes = 0
+        let counter = document.getElementsByTagName("span")[0]
+        let clicker = document.getElementsByTagName("button")[0]
+        let planeEmojiText = document.getElementById("planeEmojis")
+        speed = 1000
+
+        function checkForUpgrade(){
+            if(planes == 600){
+                planes++
+                speed = 500
+                clearInterval(interval)
+                window.setInterval(autoclick, speed)
+            }
+        }
+        function autoclick(){
+            clicker.click()
+            checkForUpgrade()
+        }
+        let interval = window.setInterval(autoclick, speed)
+
+   </Script>
+    </body>
+</html>

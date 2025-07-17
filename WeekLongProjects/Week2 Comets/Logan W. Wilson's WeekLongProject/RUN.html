@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUN</title>
+     <style>
+    body {
+      background-image: url('wallpaper.jpg');
+      background-size: cover;
+      transition: background-image 1s ease-in-out;
+    }
+  </style>
+  <script>
+    // Time thresholds (in milliseconds)
+    const wallpaperChangeTime = 3100;  // 3.1 seconds
+    const redirectTime = 5000;        //  5 seconds
+
+    // Preload the sound
+    const soundEffect = new Audio('https://www.myinstants.com/media/sounds/death-roman_k-1190383229_h0Q4tg3.mp3'); // Use your custom sound file path
+
+    // Change wallpaper and play sound
+    setTimeout(() => {
+      document.body.style.backgroundImage = "url('https://c4.wallpaperflare.com/wallpaper/804/716/5/skull-monochrome-wallpaper-preview.jpg')";
+      soundEffect.play();
+    }, wallpaperChangeTime);
+
+    // Redirect after further time
+    setTimeout(() => {
+      window.location.href = "Death.html";
+    }, redirectTime);
+  </script>
+</head>
+<body>
+  <!-- Hidden audio for preloading -->
+  <audio id="wallpaper-audio" src="https://www.myinstants.com/media/sounds/death-roman_k-1190383229_h0Q4tg3.mp3"></audio>
+
+
+     <script>
+    let clickCount = 0;
+    const clickLimit = 20; // Change this to the number of clicks you want
+
+    function handleClick() {
+      clickCount++;
+      if (clickCount >= clickLimit) {
+        window.location.href = "Escaped.html"; // Replace with your target HTML file
+      }
+    }
+  </script>
+</head>
+<body>
+    <h1>RUN!</h1>
+    <button onclick="handleClick()">Run.</button>
+</body>
+</html>

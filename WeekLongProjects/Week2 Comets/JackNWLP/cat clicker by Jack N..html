@@ -1,0 +1,98 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <style>
+
+        #myImage {
+      display: none;
+      width: 50px;
+      height: auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 30px;
+      
+    }
+   </style>
+     
+     <style>
+       body {
+    background-image: url('https://i.imgur.com/V8KJquA.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+     </style>
+
+     <style>
+     h3 {
+  font-family: 'Comic Sans MS', cursive;
+  color: #000000;
+  background-color: rgba(53, 93, 204, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+}
+        
+
+     </style>
+     <style>
+
+
+button:hover {
+  background-color: #258bc7;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+     </style>
+
+   
+</head>
+<body>
+
+  <button onclick="resetCounter()">Reset</button>
+<script>
+  function resetCounter() {
+    cats = 0;
+    counter.innerHTML = `${cats}`;
+  }
+</script>
+<button onclick="toggleImage()">Hidden</button>
+  <br><br>
+  <img id="myImage" src="https://www.pngmart.com/files/1/Cat-PNG-Clipart.png" alt="Toggled Image">
+    
+   <button onclick="playSound()">Click Me!</button>
+   
+<button  onclick="cats++; counter.innerHTML = `${cats}`"><img width="550px"  src="https://www.pngmart.com/files/1/Siberian-Cat-PNG.png" alt="a picture of a cat"> </button>
+<h3>cats: <span>0</span></h3>
+<script>
+   
+    let cats = 0
+    let counter = document.getElementsByTagName("span")[0]
+    let audio = document.getElementsByTagName("button")
+    
+  
+   
+</script>
+<script> function playSound() {
+    const sound = new Audio("cat-meow-8-fx-306184.mp3");
+    sound.play();
+  }</script>
+
+  <script>
+     function toggleImage() {
+      const img = document.getElementById("myImage");
+      const currentDisplay = window.getComputedStyle(img).display;
+      img.style.display = (currentDisplay === "none") ? "block" : "none";
+    }
+    </script>
+
+    <script></script>
+</body> 
+
+
+</html>
+
+

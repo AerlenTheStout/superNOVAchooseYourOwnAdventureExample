@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            font-size: 2rem;
+            color: #333;
+        }
+        a:hover {
+            color: #007BFF;
+            
+        }
+    </style>
+</head>
+<body>
+    <ul id="Camps">
+        <!-- <li><a href="/~jyorke/superNOVA/Example_Adventure/index.html">Example Adventure</a></li>
+        <li><a href="/~jyorke/superNOVA/Timmy's adventure">Timmy's adventure!</a></li>
+        <li><a href="/~jyorke/superNOVA/Logan W. Wilson's WeekLongProject/The Labratory.html">Logan W. Wilson's WeekLongProject</a></li> -->
+    </ul>
+
+    <script>
+        // This script will fetch the list of projects from our PHP script.
+
+        // Define the path to your PHP endpoint.
+        const projectsApiEndpoint = 'get_projects.php';
+
+        /**
+         * Fetches project data and populates the project list.
+         */
+        async function loadProjects() {
+            const projectListContainer = document.getElementById('Camps');
+            
+            try {
+                // Fetch the data from the PHP script.
+                const response = await fetch(projectsApiEndpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`Could not load project list from PHP script. Status: ${response.status}`);
+                }
+                
+                const projects = await response.json();
+
+                projectListContainer.innerHTML = '';
+
+                if (!projects || projects.length === 0) {
+                    projectListContainer.innerHTML = '<p class="text-gray-500 col-span-full text-center">No project folders found. Try adding a new folder.</p>';
+                    return;
+                }
+
+                console.log(projects);
+                
+                let projectsFiltered = projects.filter((project) => !project.folder.startsWith("."))
+                console.log(projectsFiltered)
+                
+                projectsFiltered.forEach(project => {
+                    const projectElement = document.createElement('a');
+                    projectElement.href = `./${project.folder}/`; 
+                    projectElement.className = 'project-link bg-white p-6 rounded-lg shadow-md block';
+                    
+                    const safeName = document.createTextNode(project.name);
+
+                    const titleElement = document.createElement('h2');
+                    titleElement.className = 'text-xl font-bold text-gray-800';
+                    titleElement.appendChild(safeName);
+                    
+                    const linkTextElement = document.createElement('div');
+                    linkTextElement.className = 'mt-4 text-blue-600 font-semibold flex items-center';
+
+                    projectElement.appendChild(titleElement);
+                    projectElement.appendChild(linkTextElement);
+
+                    projectListContainer.appendChild(projectElement);
+                });
+
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                projectListContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">Error: Could not load project list. Check the PHP script for errors.</p>`;
+            }
+        }
+
+        // Load the projects when the page is ready.
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+</body>
+</html>
+

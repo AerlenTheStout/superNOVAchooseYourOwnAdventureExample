@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cookie Clicker Game</title>
+</head>
+<body>
+  <!-- First Clicker (Manual + Auto) -->
+  <button onclick="clickFirst();">
+    <img width="300px" height="300px" src="https://theeburgerdude.com/wp-content/uploads/2023/12/Cookie-New-01-1536x1536.jpg" alt="Cookie Clicker">
+  </button>
+  <h3>Cookies: <span id="cookiesFirst">0</span></h3>
+  <h5>Base Auto-click speed: <span id="clickSpeedDisplay">2.5</span>s</h5>
+
+  <!-- Upgrade Button -->
+  <button onclick="activateSecondClicker();">
+    <img width="100px" height="100px" src="https://www.play6x.com/wp-content/uploads/2024/04/coockie-click.png" alt="Upgrade Clicker">
+  </button>
+  <h4>Upgrade Cost: <span id="upgradeCostDisplay">10</span></h4>
+  <h4>Upgrades Used: <span id="cookiesSecond">0</span></h4>
+
+  <script>
+    let cookiesFirst = 0;
+    let cookiesSecond = 0;
+    let baseAutoClickInterval = 2500;
+    let upgradeCost = 10;
+
+    const counterFirst = document.getElementById("cookiesFirst");
+    const counterSecond = document.getElementById("cookiesSecond");
+    const upgradeCostDisplay = document.getElementById("upgradeCostDisplay");
+    const clickSpeedDisplay = document.getElementById("clickSpeedDisplay");
+
+    // Manual click
+    function clickFirst() {
+      cookiesFirst++;
+      counterFirst.innerHTML = cookiesFirst;
+    }
+
+    // Start initial auto-clicker
+    function startBaseAutoClicker() {
+      setInterval(() => {
+        cookiesFirst++;
+        counterFirst.innerHTML = cookiesFirst;
+      }, baseAutoClickInterval);
+    }
+
+    // Each upgrade spawns a NEW auto-clicker
+    function activateSecondClicker() {
+      if (cookiesFirst >= upgradeCost) {
+        cookiesFirst -= upgradeCost;
+        counterFirst.innerHTML = cookiesFirst;
+
+        cookiesSecond++;
+        counterSecond.innerHTML = cookiesSecond;
+
+        upgradeCost += 10;
+        upgradeCostDisplay.innerHTML = upgradeCost;
+
+        if (baseAutoClickInterval > 500) {
+          baseAutoClickInterval -= 500;
+          clickSpeedDisplay.innerHTML = (baseAutoClickInterval / 1000).toFixed(1);
+        }
+
+        // New auto-clicker added each time
+        setInterval(() => {
+          cookiesFirst++;
+          counterFirst.innerHTML = cookiesFirst;
+        }, baseAutoClickInterval);
+      }
+    }
+
+    window.onload = startBaseAutoClicker;
+  </script>
+</body>
+</html>

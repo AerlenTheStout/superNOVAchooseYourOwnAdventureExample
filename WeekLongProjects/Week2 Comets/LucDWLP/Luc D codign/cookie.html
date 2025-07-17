@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker Game</title>
+</head>
+<body>
+    <!-- First Clicker -->
+    <button onclick="clickFirst();">
+        <img width="300px" height="300px" src="https://theeburgerdude.com/wp-content/uploads/2023/12/Cookie-New-01-1536x1536.jpg" alt="First Clicker">
+    </button>
+    <h3>Cookies: <span id="cookiesFirst">0</span></h3>
+
+    <!-- Second Clicker -->
+    <button onclick="activateSecondClicker();">
+        <img width="100px" height="100px" src="https://www.play6x.com/wp-content/uploads/2024/04/coockie-click.png" alt="Second Clicker">
+    </button>
+    <h4>Upgrade the clicker: <span id="cookiesSecond">0</span></h4>
+
+    <script>
+        let cookiesFirst = 0;
+        let cookiesSecond = 0;
+        let autoClickerActive = false;
+
+        const counterFirst = document.getElementById("cookiesFirst");
+        const counterSecond = document.getElementById("cookiesSecond");
+        
+        
+        function clickFirst() {
+            cookiesFirst++;
+            counterFirst.innerHTML = `${cookiesFirst}`;
+            
+            // When cookies reach 10, activate the second clicker
+            if (cookiesFirst >= 10 && !autoClickerActive) {
+                cookiesFirst -= 100; // Subtract 100 from the first clicker
+                counterFirst.innerHTML = `${cookiesFirst}`;
+                autoClickerActive = true;
+                startSecondClicker(); // Start the second clicker's auto-clicking
+            }
+        }
+
+        // Activate the second clicker (start auto-clicking)
+        function startSecondClicker() {
+            window.setInterval(() => {
+                cookiesSecond++;
+                counterSecond.innerHTML = `${cookiesSecond}`;
+            }, 2500); // Auto-click every 2.5 seconds
+        }
+
+        // Second clicker functionality (manual clicker)
+        function activateSecondClicker() {
+            
+        }
+    </script>
+</body>
+</html>

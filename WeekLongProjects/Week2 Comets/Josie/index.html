@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Josie's Fun Web</title>
+</head>
+<body style="background-color: aquamarine;">
+    <h2>Welcome To My Fun Web!</h2>
+    
+    <img width="400px" id="catimage" src="https://i.pinimg.com/736x/db/a9/99/dba9996f58650c1d73e84ab94e479803.jpg" alt="A Cute Couple Of Chibi Cats To Click On">
+    <h2>Cats = <span id="numberofcats">0</span> </h2>
+    
+    <script>
+        let cat = 0
+        let catimage = document.getElementById("catimage")
+        let numberofcats = document.getElementById("numberofcats")
+        catimage.addEventListener("click", () => {cat++; numberofcats.innerHTML = `${cat}`})
+        
+    </script> 
+    <button id="startButton" style="position: absolute; top: 20px; right: 237px; height: 30px;">Start</button>
+   <table style="position: absolute; right: 50px; top: 50px;">
+    <tr>
+        <td><button onclick="buttonClicked(1)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot1">1</button></td>
+        <td><button onclick="buttonClicked(2)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot2">2</button></td>
+        <td><button onclick="buttonClicked(3)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot3">3</button></td>
+        <td><button onclick="buttonClicked(4)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot4">4</button></td>
+    </tr>
+    <tr>
+        <td><button onclick="buttonClicked(5)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot5">5</button></td>
+        <td><button onclick="buttonClicked(6)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot6">6</button></td>
+        <td><button onclick="buttonClicked(7)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot7">7</button></td>
+        <td><button onclick="buttonClicked(8)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot8">8</button></td>
+    </tr>
+    <tr>
+        <td><button onclick="buttonClicked(9)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot9">9</button></td>
+        <td><button onclick="buttonClicked(10)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot10">10</button></td>
+        <td><button onclick="buttonClicked(11)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot11">11</button></td>
+        <td><button onclick="buttonClicked(12)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot12">12</button></td>
+    </tr>
+    <tr> 
+        <td><button onclick="buttonClicked(13)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot13">13</button></td>
+        <td><button onclick="buttonClicked(14)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot14">14</button></td>
+        <td><button onclick="buttonClicked(15)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot15">15</button></td>
+        <td><button onclick="buttonClicked(16)" style="width: 100px; height: 100px;" class="memoryButton"  id="spot16">16</button></td>
+    </tr>
+   </table>
+<script>
+    const startButton = document.getElementById("startButton")
+    let currentPuzzle = [];
+    
+    function addNewToMemorize(){
+        let tempRandomSquare = Math.floor(Math.random()*16)
+        currentPuzzle.push(tempRandomSquare)
+    }
+
+    function sleep(ms){
+        return new Promise(resolve => setTimeout(resolve,ms));
+    }
+
+    
+    async function flashCards(){
+        for(let i = 0; i < currentPuzzle.length; i++){
+            let element = currentPuzzle[i]
+            let targetButton = document.getElementById(`spot${element}`)
+            targetButton.style.backgroundColor = "aqua"
+            await sleep(1000)
+            resetSquare(targetButton)
+            
+
+            // setTimeout(() => {resetSquare(targetButton)},1000)
+
+            // let finshed = false
+        }
+
+    }
+
+    function resetSquare(targetSquare){
+        targetSquare.style.backgroundColor = ""
+        // finshed = true
+    }
+
+    let index = 0
+    function buttonClicked(buttonNumber){
+        if (buttonNumber == currentPuzzle[index]){
+            index++;
+        }else {
+            gameOver()
+        }
+        if(index == currentPuzzle.length){
+            startGame()
+        }
+    }
+    
+    function startGame(){
+        startButton.disabled = true;
+        index = 0
+        addNewToMemorize()
+        flashCards()
+    }
+    function gameOver(){
+        currentPuzzle = []
+        index = 0
+        startButton.disabled = false;
+        alert("Game Over!!")
+    }
+    startButton.addEventListener("click", startGame)
+</script>
+</body>
+</html> 

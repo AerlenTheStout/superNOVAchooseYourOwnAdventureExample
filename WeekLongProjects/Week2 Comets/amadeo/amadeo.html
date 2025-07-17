@@ -1,0 +1,20 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amadeo's Cookie Clicker</title>
+    </head>
+    <body>
+    <button onclick="cookies++; counter.innerHTML = `${cookies}`"><img width="350px" src="https://www.dessertfortwo.com/wp-content/uploads/2023/04/Single-Serve-Chocolate-Chip-Cookie-5.jpg" alt="a picture of a cookie"></button>
+    <h3> Amadeo's Cookies: <span>0<span><h3>
+    <script>
+        function autoClick() {
+            clicker.click()
+        }
+        let cookies = 0
+        let counter = document.getElementsByTagName("span")[0]
+        let click = document.getElementsByTagName("button")[0]
+        window.setInterval (autoClick,1)
+    </script>
+    </body>

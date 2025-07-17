@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" context="width=device-width, initial-scale=1.0">
+    <title>COOKIES YUMMERS</title>
+</head>
+ <body>
+    <button id="autoClickUpgrade">Buy autoclicker 100 cookies</button>
+    <button id="clicker" onclick="cookies++; counter.innerHTML = `${cookies}`">
+        <img width="900px" height="500px"
+         src="closeup-shot-chocolate-chip-cookie-isolated.jpg" 
+         alt="a picture of a cookie"> </button>
+    <h3>Cookies: <span>0</span></h3>
+    <script>
+        let Speed = 1000
+        let cookies = 0 
+        let counter = document.getElementsByTagName("span")[0]
+        let clicker = document.getElementById('clicker')
+        function autoClick(){
+            clicker.click()
+            console.log("autoClick");
+        
+        }
+        let interval = window.setInterval(autoClick,1000)
+        console.log(interval);
+        
+        let autoClickerUpgradeButton = document.getElementById("autoClickUpgrade")
+        autoClickerUpgradeButton.addEventListener("click", () => {
+            if(cookies >= 100){
+                console.log("Bought upgrade")
+                cookies -= 100
+                Speed -= 25
+                clearInterval(interval)
+                setInterval(autoClick, Speed)
+            }
+        })
+
+        
+        
+
+    </script>
+
+
+ 
+
+ </body>
+ 
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- TODO: Add farms and other buildings, add messages -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link rel="icon" href="cookie_cursor.png" type="image/x-icon">
+    <style>
+        body {
+            font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            background-color: brown;
+            background-image: url(https://wallpaperaccess.com/full/4737828.jpg);
+            cursor: url(cookie_cursor.png),pointer;
+        }
+        .upgrade{
+            position: absolute;
+             top: 45%; 
+             left: 45%;
+             background-color: gold;
+            outline: none;
+        }
+        
+        #cookie {
+            background: transparent; /* Makes the background transparent */
+      border: none; /* Removes the border */
+      color: inherit; /* Keeps the text color consistent */
+      cursor: url(cookie_cursor.png),pointer;
+      outline: none; 
+
+position: absolute; /* or 'fixed' for viewport positioning */
+  top: 40%;
+  right: 0;
+
+    }
+    button {
+        cursor: url(cookie_cursor.png),pointer;
+    }
+    </style>
+    <title id="title">Cookie Clicker</title>
+
+    <script src="script.js"></script>
+
+</head>
+<body>
+    <audio style="display:none;" autoplay loop> <source src="assets\sounds\simple-happy-life-353819.mp3" type="audio/mp3"></audio>
+    <h1 style="text-align: center;">🍪Cookie Clicker🍪</h1>
+    <h2 id="status" style="text-align: center">Press to resume/start the game.</h2>
+    <div id="missions">
+    <h2>🏆Achievements🏆</h2>
+    <ul id="mission_list"></ul>
+</div>
+    <!-- Autoclicker Display Info Hidden  -->
+    <h2 style="display: none;" id="autoclicker">CPS: 0</h2>
+    <h3 id="broadcast"></h2>
+    
+   
+    
+    
+<button onclick="localStorage.clear();window.location.href=window.location.href">Reset score</button>
+<ul class="building-list">
+<li> <button style="display: none;" onclick="sell('cursor')" id="sell-cursor">Sell Cursor</button><br><button onclick="buyCursor();" id="cursorBuy"><img src="cursor.png" height="50px" width="50px" alt="Cursor Icon">Buy Cursor (10 Cookies-+0.1 CPS)</button></li>
+<li><button style="display: none;" onclick="sell('grandma')" id="sell-grandma">Sell Grandma</button><br><button onclick="buyGrandma();" id="grandmaBuy"><img src="grandma.webp" height="50px" width="50px" alt="Grandma Icon">Buy Grandma (100 Cookies-+1 CPS)</button></li>
+<li>
+    <button style="display: none;" onclick="sell('farm')" id="sell-farm">Sell Farm</button><br><button onclick="buyFarm();" id="farmBuy"><img src="farm.webp" height="50px" width="50px" alt="Farm Icon">Buy Farm (1000 Cookies-+8 CPS)</button></li>
+<li><button style="display: none;" onclick="sell('mine')" id="sell-mine">Sell Mine</button><br><button onclick="buyMine();" id="mineBuy"><img src="mine.webp" height="50px" width="50px" alt="Mine Icon">Buy Mine (12000 Cookies-+47 CPS)</button></li>
+<li><button style="display: none;" onclick="sell('factory')" id="sell-factory">Sell Factory</button><br><button onclick="buyFactory();" id="factoryBuy"><img src="factory.webp" height="50px" width="50px" alt="Factory Icon">Buy Mine (100000 Cookies-+260 CPS)</button></li>
+</ul>
+<h1 style="position: absolute;top: 30%; left: 50%;">Upgrade</h1>
+<!-- <button class="milk" id="milk" onclick="milk();"><img src="milk.webp" alt="A pixel art drwaing of a glass of milk" height="50px" width="50px">Glass of Milk (For every click +1 cookies) </button> -->
+<button class="upgrade" id="2x-cps" onclick="upgrade();"><img src="2x.png" height="50px" width="50px" alt="Factory Icon">2x CPS Upgrade (20000 cookies)</button>
+<button id="cookie"><img src="big_cookie.webp" alt="A chocolate chip cookie button you can press" height="250px" width="250px"></button>
+<footer><i>This game was created at <span style="background-color: black;">[REDACTED]</span> by <span style="background-color: black;">[REDACTED]</span>. ©2025. All Rights Reserved. Credit to Orteil for the idea.</i></footer>
+<script>
+    const click = new Audio('mouse-click-346047.mp3');
+document.getElementById("cookie").addEventListener("click", function() {
+    clicks++;
+    click.play();
+    console.log(clicks);
+    localStorage.setItem('cookies', clicks);
+    document.getElementById('status').innerHTML = 'Good job! You have ' + clicks + ' cookies.';
+    ach_logic();
+});
+</script>
+</body>
+</html>

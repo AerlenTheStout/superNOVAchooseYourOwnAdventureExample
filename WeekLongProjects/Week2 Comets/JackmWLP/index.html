@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotdog Clicker!</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAArPP6AIro/wAAAJwAUeDtAFjV9QAtyNYAAADHAEBA4wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUFBQUFBQUFBQUAAAAAAAUCAgICAgICAgICBQAAAAADAwMDAwMDAwMDAwMAAAADBwYHBwcGBwcHBgcHAwAAAwQHBAcEBwQHBAcEBwMAAAMICAgBCAgIAQgICAEDAAAAAwMDAwMDAwMDAwMDAAAAAAUCAgICAgICAgICBQAAAAAABQUFBQUFBQUFBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA//8AAP//AADgBwAAwAMAAMADAACAAQAAgAEAAIABAADAAwAAwAMAAOAHAAD//wAA//8AAP//AAA=">
+</head>
+<body>
+    <audio id="hotdogSound">
+  <source src="https://www.myinstants.com/media/sounds/cookie-clicker-buy-sound.mp3" type="audio/mpeg">
+</audio>
+
+    <style>
+        html {
+            background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20190830/pngtree-hot-dog-seller-background-in-the-car-vector-image_309234.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed; 
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <h1>Hotdog Clicker!</h1>
+    <h3>by Jack M.</h3>
+    <button onclick="increaseHotdogs(); playHotdogSound();"><img width="256px" height="256px" src="https://media.istockphoto.com/id/1271679742/vector/hot-dog-isolated-icon-on-white-background.jpg?s=612x612&w=0&k=20&c=zF7r1PccO-uGzsTsHtGPv9ebmlTIhXC9pZFq7RzeM1g=" alt="Click the Hotdog!!"></button>
+    <h3>Hotdogs: <span>0</span></h3>
+    <h4>Shop</h4>
+    <button onclick="addon1func()">$50 Autoclicker (1 hotdog per second)</button>
+    <h1></h1>
+    <button onclick="addon2func()">$300 Autoclicker 2 (10 hotdogs per second)</button>
+    <h1></h1>
+    <button onclick="addon3func()">$2,500 Epic Autoclicker (100 hotdogs per second)</button>
+    <h1></h1>
+    <button onclick="addon4func()">$100,000 Ultra Autoclicker (1,000 hotdogs per second)</button>
+    <h1></h1>
+    <button onclick="addon5func()">$1,000,000,000 Omega Autoclicker (1,000,000 hotdogs per second)</button>
+    <h1></h1>
+    <script>
+        let addon5 = 0;
+        let addon4 = 0;
+        let addon3 = 0;
+        let addon2 = 0;
+        let addon1 = 0;
+        function addon1func(){
+            if (hotdogs >= 50){
+                playHotdogSound();
+                hotdogs = hotdogs - 50
+                addon1 = 1;
+                if (addon1 === 1){
+            window.setInterval(autoClick, 1000)
+
+        }
+
+            }
+            
+        }
+        function addon2func(){
+            if (hotdogs >= 300){
+                playHotdogSound();
+                hotdogs = hotdogs - 300
+                addon2 = 1;
+                if (addon2 === 1){
+                    window.setInterval(autoClick, 100)
+                }
+            }
+        }
+        function addon3func(){
+            if (hotdogs >= 2500){
+                playHotdogSound();
+                hotdogs = hotdogs - 2500
+                addon3 = 1;
+                if (addon3 === 1){
+                    window.setInterval(autoClick, 10)
+                }
+            }
+        }
+        function addon4func(){
+            if (hotdogs >= 100000){
+                playHotdogSound();
+                hotdogs = hotdogs - 100000
+                addon4 = 1;
+                if (addon4 === 1){
+                    window.setInterval(autoClick, 1)
+                }
+            }
+        }
+        function addon5func(){
+            if (hotdogs >= 1000000000){
+                playHotdogSound();
+                hotdogs = hotdogs - 1000000000
+                addon5 = 1;
+                if (addon5 === 1){
+                    window.setInterval(autoClick, 0.001)
+                }
+            }
+        }
+        function autoClick(){
+            increaseHotdogs();
+        }
+        function playHotdogSound(){
+    const audio = document.getElementById("hotdogSound");
+    audio.play();
+        }
+        function increaseHotdogs(){
+             hotdogs++;
+             counter.innerHTML = `${hotdogs}`;
+        }
+        let hotdogs = 0
+        let counter = document.getElementsByTagName("span")[0]
+        let clicker = document.getElementsByTagName("button")[0]
+        
+    </script>
+</body>
+</html>
