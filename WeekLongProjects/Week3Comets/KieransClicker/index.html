@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donut Clicker</title>
+</head>
+<body>
+    <h1>Welcome To Donut Clicker</h1>
+    <img 
+    id="Donut"
+    src="https://static.vecteezy.com/system/resources/previews/027/182/578/non_2x/photo-of-one-delicious-donut-with-topping-top-view-isolated-on-a-transparent-background-free-png.png" 
+    alt="Dount"
+    width="500"> 
+    <h2> Clicks: <span id="click-count">0</span></h2>
+    <button id="autoClickerUpgradeButton">Buy an Auto Clicker <span id="autoClickerPrice">50</span> clicks</button>
+    <button id="UpgradeButton2">Buy A Worker <span id="workerprice">125</span> clicks</button>
+    <button id="UpgradeButton3">Buy An AI Worker <span id="AIPrice">500</span> clicks</button>
+    <script>
+        let clickCount = 0;
+         let autoClickerUpgradePrice = 50;
+         let UpgradeButton = 125;
+         let AIButton = 500
+
+        const image = document.getElementById('Donut');
+        const clickSpan = document.getElementById('click-count');
+        
+        const autoClickerUpgradeButton = document.getElementById("autoClickerUpgradeButton")
+    const autoClickerPrice = document.getElementById("autoClickerPrice")
+
+    
+    const UpgradeButton2 = document.getElementById("UpgradeButton2")
+    const workerprice = document.getElementById("workerprice")
+
+    const UpgradeButton3 = document.getElementById("UpgradeButton3")
+    const AIPrice = document.getElementById("AIPrice")
+
+    let autoClickPower = 1;
+
+        image.addEventListener("click", () => {
+            clickCount++
+            clickSpan.textContent = clickCount
+        })
+
+         autoClickerUpgradeButton.addEventListener("click", () => {
+        if(clickCount >= autoClickerUpgradePrice){
+            autoClickPower++;
+            clickCount -= autoClickerUpgradePrice;
+            autoClickerUpgradePrice *= 1
+            autoClickerPrice.textContent = Math.floor(autoClickerUpgradePrice);
+        }
+    })
+
+        image.addEventListener("click", () => {
+            clickCount++
+            clickSpan.textContent = clickCount
+        })
+
+        UpgradeButton2.addEventListener("click", () => {
+        if(clickCount >= UpgradeButton){
+        autoClickPower += 5;
+        clickCount -= UpgradeButton;
+        UpgradeButton *= 2
+        workerprice.textContent = Math.floor(UpgradeButton)
+        }
+        })
+    
+        image.addEventListener("click", () => {
+            clickCount++
+            clickSpan.textContent = clickCount
+        })
+
+        UpgradeButton3.addEventListener("click", () => {
+        if(clickCount >= AIButton){
+        autoClickPower += 30;
+        clickCount -= AIButton
+        AIButton *= 2
+        AIPrice.textContent = Math.floor(AIPrice)
+        }
+        })
+
+     function autoClicker(){
+        clickCount += autoClickPower;
+        clickSpan.textContent = clickCount
+    }
+
+    
+
+
+    </script>
+</body>
+</html>

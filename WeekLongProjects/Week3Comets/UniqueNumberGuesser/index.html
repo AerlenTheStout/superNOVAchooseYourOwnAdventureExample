@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Number Guessing Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      color: white;
+      font-size: 3rem;
+      text-shadow: 2px 2px #00000055;
+      animation: popIn 1s ease-in;
+    }
+
+    #game {
+      background-color: #ffffffcc;
+      border-radius: 25px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border: 4px solid transparent;
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      background-image: linear-gradient(white, white),
+        linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+      animation: borderSpin 8s linear infinite;
+      transition: transform 0.3s ease;
+    }
+
+    @keyframes borderSpin {
+      0% { background-image: linear-gradient(white, white), linear-gradient(0deg, red, orange, yellow, green, blue, indigo, violet); }
+      100% { background-image: linear-gradient(white, white), linear-gradient(360deg, red, orange, yellow, green, blue, indigo, violet); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    select, input, button {
+      padding: 12px;
+      margin: 10px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    select, input {
+      width: 70%;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, white 10%, transparent 10.01%);
+      background-size: 10px 10px;
+      animation: shine 4s linear infinite;
+      opacity: 0.1;
+    }
+
+    @keyframes shine {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(100px, 100px); }
+    }
+
+    #message {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .success { color: green; animation: glow 1s infinite alternate; }
+    .fail { color: red; }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px lime; }
+      to { text-shadow: 0 0 20px lime; }
+    }
+
+    #gameArea {
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      #game {
+        padding: 20px;
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Number Guessing Game</h1>
+  <div id="game">
+    <label for="difficulty">Choose difficulty:</label><br>
+    <select id="difficulty">
+      <option value="easy">Easy (1–10)</option>
+      <option value="medium">Medium (1–50)</option>
+      <option value="hard">Hard (1–100)</option>
+    </select><br>
+
+    <button onclick="startGame()">Start Game</button>
+    <div id="gameArea" style="display:none;">
+      <p>Guess a number between <span id="min">1</span> and <span id="max">10</span></p>
+      <input type="number" id="guessInput" placeholder="Your guess" />
+      <button onclick="makeGuess()">Guess</button>
+      <p id="message"></p>
+      <p>Attempts left: <span id="attemptsLeft"></span></p>
+    </div>
+  </div>
+
+  <script>
+    let min = 1, max = 10, secret = 0, attempts = 0, remaining = 0;
+
+    function startGame() {
+      const difficulty = document.getElementById("difficulty").value;
+      
+      if (difficulty === "easy") {
+        min = 1; max = 10; attempts = 5;
+      } else if (difficulty === "medium") {
+        min = 1; max = 50; attempts = 10;
+      } else if (difficulty === "hard") {
+        min = 1; max = 100; attempts = 15;
+      }
+      
+      secret = Math.floor(Math.random() * (max - min + 1)) + min;
+      remaining = attempts;
+      
+      document.getElementById("min").textContent = min;
+      document.getElementById("max").textContent = max;
+      document.getElementById("attemptsLeft").textContent = remaining;
+      document.getElementById("message").textContent = "";
+      document.getElementById("gameArea").style.display = "block";
+      document.getElementById("gameArea").style.animation = "fadeIn 1s ease-in";
+    }
+
+    function makeGuess() {
+      const guess = parseInt(document.getElementById("guessInput").value);
+      if (isNaN(guess)) {
+        showMessage("Please enter a valid number.", "fail");
+        return;
+      }
+
+      remaining--;
+      document.getElementById("attemptsLeft").textContent = remaining;
+
+      if (guess === secret) {
+        alert(`Correct! The number was ${secret}.`, "success");
+        endGame();
+      } else if (remaining === 0) {
+        alert(` You're out of attempts! The number was ${secret}.`, "fail");
+        endGame();
+      } else if (guess < secret) {
+        showMessage("🔼 Too low! Try a higher number.", "fail");
+      } else {
+        showMessage("🔽 Too high! Try a lower number.", "fail");
+      }
+    }
+
+    function showMessage(msg, type) {
+      const message = document.getElementById("message");
+      message.textContent = msg;
+      message.className = type;
+    }
+
+    function endGame() {
+      document.getElementById("gameArea").style.display = "none";
+    }
+  </script>
+</body>
+</html>

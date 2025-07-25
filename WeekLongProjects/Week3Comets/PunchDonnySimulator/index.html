@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Punch Donny Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark">
+  <div class="background"></div>
+  <div class="container">
+    <div class="toggle-mode">
+      <button id="mode-toggle">Switch to Light Mode</button>
+    </div>
+    <h1 class="title">PUNCH DONNY SIMULATOR</h1>
+    <div class="status">
+      <p class="score">Punches: <span id="score">0</span></p>
+      <p class="stage">Stage: <span id="stage">1</span></p>
+    </div>
+    <div class="health-bar"><div id="health-fill"></div></div>
+    <div class="game-area">
+      <div class="donny-container">
+        <img src="donny.png" id="donny" alt="Donny" />
+        <div id="flash-text"></div>
+      </div>
+      <button id="punch-btn">PUNCH</button>
+      <div id="fist">&#128074;</div>
+    </div>
+    <div class="upgrades">
+      <h2>Upgrades</h2>
+      <button id="upgrade-click" disabled>+5 Damage - <span id="click-cost">50</span> pts</button>
+      <button id="upgrade-auto" disabled>Auto Clicker - <span id="auto-cost">200</span> pts</button>
+      <button id="upgrade-multiplier" disabled>2x Multiplier - <span id="multi-cost">500</span> pts</button>
+      <button id="upgrade-speed" disabled>Faster Auto - <span id="speed-cost">300</span> pts</button>
+    </div>
+    <div class="achievements">
+      <h2>Achievements</h2>
+      <ul id="ach-list"></ul>
+    </div>
+    <p class="upgrade-msg" id="upgrade-msg"></p>
+  </div>
+  <audio id="punch-sound" src="punch.mp3"></audio>
+  <audio id="ko-sound" src="ko.mp3"></audio>
+
+  <!-- Developer Powers Panel -->
+  <div id="dev-panel" class="dev-panel">
+    <h3>Developer Powers</h3>
+    <input type="number" id="dev-punches" placeholder="Set Punches" />
+    <input type="number" id="dev-stage" placeholder="Set Stage" />
+    <input type="number" id="dev-health" placeholder="Set Health" />
+    <input type="number" id="dev-damage" placeholder="Set Damage" />
+    <input type="number" id="dev-multiplier" placeholder="Set Multiplier" />
+    <input type="number" id="dev-auto-clicks" placeholder="Set Auto Clicks" />
+    <input type="number" id="dev-speed" placeholder="Set Speed" />
+    <button id="apply-dev-powers">Apply Powers</button>
+    <button id="reset-dev-powers">Reset Game</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

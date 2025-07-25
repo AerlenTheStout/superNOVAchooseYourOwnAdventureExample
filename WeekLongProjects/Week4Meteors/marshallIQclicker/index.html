@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ clicker</title>
+</head>
+<body>
+    <img width="555 px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxs7zXQA4OjJPuPIesrkdVYPcvoQ1MGYIPzQ&s" onclick="addIQ()"> 
+    <p>IQ: <span id="IQcount">0</span></p>
+    <br><br>
+    <button id="autoClicker" onclick="buyTelekinesis()" disabled>
+        Buy Telekinesis (100 IQ)
+    </button>
+
+    <script> 
+        let IQ = 0;
+        let autoClickerLevel = 0;
+        let autoClickerCost = 100;
+
+        function addIQ() {
+            IQ++;
+            updateDisplay();
+            checkUpgrade();
+        }
+
+        function updateDisplay() {
+            document.getElementById("IQcount").innerText = IQ;
+        }
+
+        function checkUpgrade(){
+            const btn = document.getElementById("autoClicker");
+            btn.disabled = IQ < autoClickerCost;
+        }
+
+        function buyTelekinesis(){
+            if (IQ >= autoClickerCost) {
+                IQ -= autoClickerCost;
+                autoClickerLevel++;
+                autoClickerCost = Math.floor(autoClickerCost * 1.5); // cost increases
+
+                // Update button text
+                const btn = document.getElementById("autoClicker");
+                btn.innerText = `Buy Telekinesis (Level ${autoClickerLevel + 1}) - ${autoClickerCost} IQ`;
+                
+                // Add an auto-increment every time
+                setInterval(() => {
+                    IQ++;
+                    updateDisplay();
+                    checkUpgrade();
+                }, 200);
+
+                updateDisplay();
+                checkUpgrade();
+            }
+        }
+
+        // Check every 100ms if button should be enabled
+        setInterval(checkUpgrade, 100);
+    </script>  
+</body>
+</html>

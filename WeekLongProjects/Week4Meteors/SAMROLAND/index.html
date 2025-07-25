@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruh Clicker</title>
+</head>
+<body>
+    <P>VER: 1.O</P>
+<center>
+    <img width="300" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/27e05d95-4cf3-4bb7-a363-b2518e407621/df55dov-01347c25-8b6b-4ca8-ac13-12e65a5854c1.jpg/v1/fill/w_1032,h_774,q_70,strp/bruh_man____by_yourcoolcatcassius_df55dov-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MzEyMCIsInBhdGgiOiJcL2ZcLzI3ZTA1ZDk1LTRjZjMtNGJiNy1hMzYzLWIyNTE4ZTQwNzYyMVwvZGY1NWRvdi0wMTM0N2MyNS04YjZiLTRjYTgtYWMxMy0xMmU2NWE1ODU0YzEuanBnIiwid2lkdGgiOiI8PTQxNjAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.dRi40rghkh6R1kJ4FOD0w4NedMrtAYMPWs0xdfykyLM" 
+    alt="" onclick="addBruh()"/> 
+    
+    <p>Welcome to BRUH Clicker!</p>
+    <b>CLICK THE GUY AND HE WILL SAY"BRUH" FOR bRUH POINTS. MY NAME IS B-MAN AND I WILL GUIDE YOU THROUGH THIS GAME. > "-</b>     
+    <p>Bruh counter: <span id="bruhCount">0</span></p>  
+        
+</center>  
+
+    <script>
+    let bruh = 0; 
+    function addBruh(){
+        bruh++;
+        updateDisplay();
+    }
+    function updateDisplay(){
+        document.getElementById("bruhCount").innerText = bruh;
+    }
+    </script>
+
+</body>
+</html>

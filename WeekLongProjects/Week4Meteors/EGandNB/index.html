@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)file:///E:/EGandNB/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+     <title>meme cliker</title>
+</head>
+    <body>
+        <center>
+            <h1>Meme cliker</h1>
+        <p>Memes: <span id="memeCount">4</span></p>
+        <!-- meme image to click -->
+         <img src="./index_files/shocked_face_meme_green_screen_creatorset.mp4_2023-01-27_03-57-29.901.jpg" alt="Click the meme!" style="width:500px; cursor:pointer;" onclick="addMeme()">
+         <br><br>
+         <button id="autoClicker" onclick="buyAutoClicker()" disabled="">Buy Auto CLicker (10 memes)</button>
+        
+        </center>
+        
+         <script>
+            let memes = 0;
+            //let autoClickerOn = false;
+            function addMeme(){
+                memes++;
+                updateDisplay();
+                checkUpgrade();
+            }
+
+            function updateDisplay(){
+                document.getElementById("memeCount").innerText = memes;
+            }
+
+            function checkUpgrade(){
+                const btn = document.getElementById("autoClicker");
+                if (memes >= 10 && !autoClickerOn){
+                    btn.disabled = false;
+                }
+            }
+
+            function buyAutoClicker(){
+                if (memes >= 10 && !autoClickerOn){
+                    memes -= 10;
+                    autoClickerOn = true;
+                    document.getElementById("autoClicker").innerText = "Auto Clicker Bought!";
+                    document.getElementById("autoClicker").disabled = true;
+                    setInterval(() => {
+                        memes++;
+                        updateDisplay();
+                    }, 1000);
+                }
+            }
+         </script>
+    
+</body></html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marshmello Clicker</title>
+</head>
+<body>
+    <h3>Welcome To My Marshmello Clicker</h3>
+    <img 
+    id ="Marshmello"
+    src ="https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/13071281/shutterstock_131318516.0.0.1489341449.jpg?quality=90&strip=all&crop=16.666666666667%2C0%2C66.666666666667%2C100&w=2400" alt="" width ="250" height ="300">
+    <h2> Clicks: <span id ="click-count">0</span></h2>
+    <button id="autoClickerUpgradeButton">Buy an Auto Clicker <span id="autoClickerPrice">50</span> marshmello</button>
+<script>
+    let clickCount = 0;
+    let autoClickerUpgradePrice = 50;
+
+    const image = document.getElementById('Marshmello');
+    const clickSpan = document.getElementById('click-count');
+
+    const autoClickerUpgradeButton = document.getElementById("autoClickerUpgradeButton")
+    const autoClickerPrice = document.getElementById("autoClickerPrice")
+
+    let autoClickPower = 1;
+
+    image.addEventListener("click", () => {
+        clickCount++
+        clickSpan.textContent = clickCount
+    })
+
+    autoClickerUpgradeButton.addEventListener("click", () => {
+        if(clickCount >= autoClickerUpgradePrice){
+            autoClickPower++;
+            clickCount -= autoClickerUpgradePrice;
+            autoClickerUpgradePrice *= 1.05
+            autoClickerPrice.textContent = Math.floor(autoClickerUpgradePrice);
+        }
+    })
+        
+
+    function autoClicker(){
+        clickCount += autoClickPower;
+        clickSpan.textContent = clickCount
+    }
+
+    let interval = setInterval(autoClicker, 1000)
+</script>
+</body>
+</html>

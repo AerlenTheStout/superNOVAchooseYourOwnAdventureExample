@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> AnimalClicker.game </title>
+    
+</head>
+
+<body>
+
+<img width="200px" id="clicker" src="dog.png" alt="">
+<h2>Dogs: <span id="clicksDisplay">0</span></h2>
+
+<script>
+    let clicks = 0
+    const clicker = document.getElementById("clicker")
+    const clicksDisplay = document.getElementById("clicksDisplay")
+    clicker.addEventListener("click", ()=>{
+        clicks++
+        clicksDisplay.textContent = clicks
+        if(clicks == 25){
+            clicker.src = "https://th.bing.com/th/id/R.fc9ff391e0b92927fc4a526a939b2ca3?rik=M35YB1MrloATrw&riu=http%3a%2f%2fupload.wikimedia.org%2fwikipedia%2fcommons%2fd%2fd4%2fCat_March_2010-1a.jpg&ehk=lmx5Dow%2btE7KUtrgWeamODrZNBeLisLC4x4%2bkXQRDq8%3d&risl=1&pid=ImgRaw&r=0"
+        }
+    })
+</script>
+
+</body>
+</html>

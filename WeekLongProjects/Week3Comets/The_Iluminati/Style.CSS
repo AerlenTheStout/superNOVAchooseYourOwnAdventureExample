@@ -1,0 +1,70 @@
+body {
+  background-color: #0f0f0f;
+  color: #33ff33;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#game-container {
+  margin-top: 50px;
+}
+
+#illuminati {
+  width: 200px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 0 15px rgba(0,255,0,0.5);
+}
+#illuminati:hover {
+  transform: scale(1.1);
+}
+
+#triangle-count {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+#upgrades {
+  margin: 30px auto;
+}
+
+#upgrades button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #111;
+  color: #33ff33;
+  border: 1px solid #33ff33;
+  cursor: pointer;
+  font-family: monospace;
+  transition: background-color 0.3s;
+}
+#upgrades button:hover {
+  background-color: #222;
+}
+
+#conspiracy-log {
+  margin-top: 30px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+#start-menu {
+  text-align: center;
+  margin-top: 100px;
+  color: #33ff33;
+}
+
+#start-button {
+  padding: 15px 30px;
+  font-size: 16px;
+  background-color: #111;
+  color: #33ff33;
+  border: 2px solid #33ff33;
+  cursor: pointer;
+  font-family: monospace;
+  transition: background-color 0.3s;
+}

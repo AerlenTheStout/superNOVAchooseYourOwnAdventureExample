@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DA WAE CLICKER</title>
+</head>
+<body>
+    <center>
+        <h1>DA WAE CLICKER</h1>
+        <p>DA WAE: <span id="dawaeCount">0</span></p>
+        <img
+            src="https://i.ytimg.com/vi/iQO9yRutpso/maxresdefault.jpg"
+            style="width:400px; cursor:pointer;"
+            onclick="addDAWAE()"
+        />
+        <br><br>
+        <button id="my bruddas" onclick="buymybruddas()">
+            Buy my bruddas (35)
+        </button>
+    </center>
+
+    <script>
+        let dawae = 0;
+        let bruddasCount = 0;
+
+        function addDAWAE() {
+            dawae++;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById("dawaeCount").innerText = dawae;
+        }
+
+        function buymybruddas() {
+            if (dawae >= 35) {
+                dawae -= 35;
+                bruddasCount++;
+                document.getElementById("my bruddas").innerText = `Buy my bruddas (35) - Bought: ${bruddasCount}`;
+
+                // Each "brudda" adds +1 DA WAE every 500ms
+                setInterval(() => {
+                    dawae++;
+                    updateDisplay();
+                }, 500);
+
+                updateDisplay();
+            }
+        }
+    </script>
+</body>
+</html>

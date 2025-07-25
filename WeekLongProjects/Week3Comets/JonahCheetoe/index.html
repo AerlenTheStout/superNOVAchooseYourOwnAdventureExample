@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheetoe clicker</title>
+</head>
+<body>
+<h1>welcome to cheetoe clicker</h1>
+<img width = "450" hight = "450"
+id = "cheetoe"
+src = https://lamag.com/.image/t_share/MTk3NTU1NDAzNzUyMTU0ODE4/cheeto-gettyimages-1213667618.jpg>
+<h2> Clicks: <span id = "click-count">0</span></h2>
+<button id="autoclickerUpgradeButton">buy an autoClicker, <span id="autoclickerprice">15</span>cheetoe</button>
+<script>
+    let clickcount = 0; 
+    let autoClickerUpgradePrice = 15
+    const image = document.getElementById('cheetoe');
+    const clickSpan = document.getElementById('click-count');
+
+
+    const autoClickerUpgradeButton = document. getElementById("autoclickerUpgradeButton")
+    const autoClickerprice = document.getElementById("autoclickerprice")
+
+   let autoClickPower = 0;
+   
+    image.addEventListener("click", () => { 
+        clickcount++
+        clickSpan.textContent = clickcount
+    })
+
+
+    autoClickerUpgradeButton.addEventListener("click",()=>{
+        if (autoClickPower == 0){
+            let interval = setInterval(autoClicker,1000)
+        }
+        if(clickcount >=autoClickerUpgradePrice){
+            autoClickPower++;
+            clickcount -= autoClickerUpgradePrice
+            autoClickerUpgradePrice*=1.00
+            autoClickerprice.textContent = Math.floor(autoClickerUpgradePrice)
+        
+        }
+            
+    })
+
+
+
+
+function autoClicker(){
+    clickcount +=autoClickPower;
+    clickSpan.textContent = clickcount
+}
+
+</script>
+</body>
+</html>

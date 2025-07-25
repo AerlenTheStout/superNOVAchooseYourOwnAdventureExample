@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Illuminati Clicker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Start Menu -->
+  <div id="start-menu">
+    <h1>🔺 Illuminati Clicker 🔺</h1>
+    <p>Discover the truth, one triangle at a time...</p>
+    <button id="start-button">Enter the Conspiracy</button>
+  </div>
+
+  <!-- Game Container (Hidden Initially) -->
+  <div id="game-container" style="display: none;">
+    <h1>🔺 Illuminati Clicker 🔺</h1>
+    <img src="triangle.png"
+         id="illuminati"
+         alt="Illuminati Symbol">
+    <p id="triangle-count">Triangles: 0</p>
+
+    <div id="upgrades">
+      <h3>Upgrades</h3>
+      <button id="better-click">Upgrade Click (Cost: 50)</button>
+      <button id="auto-clicker">Buy Auto Clicker (Cost: 100)</button>
+      <div id="upgrades">
+</div>
+
+    </div>
+
+    <div id="conspiracy-log">
+      <h3>Conspiracies Uncovered:</h3>
+      <ul id="conspiracies"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

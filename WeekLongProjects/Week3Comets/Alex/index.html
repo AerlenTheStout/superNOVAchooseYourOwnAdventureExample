@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby Clicker</title>
+</head>
+
+<body style="justify-items: center;">
+    <h1 style ="background-color: white; justify-content: center;">Baby Clicker</h1>
+    <h3> Click The Baby!</h3>
+    <img style="padding-left: 350px;" id = "img" src="baby 1.jpg">
+    <h2> Clicks: <span id="click-count">0</span></h2>
+    <button id = "autobtn"> Auto Clicker after <span id = "price">50</span> </button>
+    <script>
+        let clickCount = 0
+        const image = document.getElementById("img")
+        const clicks = document.getElementById("click-count") 
+        const autobtn = document.getElementById("autobtn")
+        const price = document.getElementById("price")
+        let autoClickPower =1;
+        image.addEventListener("click", () => {
+            clickCount++;
+            clicks.textContent = clickCount;
+            
+        }) 
+        autobtn.addEventListener("click", () => {
+        
+            if(clickCount>= parseInt(price.textContent)){
+                clickCount -= parseInt(price.textContent)
+                let interval = setInterval(autoClicker, 1000)
+            }
+        })
+
+        
+        function autoClicker(){
+            clickCount += autoClickPower;
+            clicks.textContent = clickCount;
+        }
+       
+
+    </script>
+</body>
+
+</html>

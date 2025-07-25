@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Da wae clicker</title>
+</head>
+<body>
+    <center>
+    
+    <img width="450px" src="https://www.pngkey.com/png/detail/956-9569021_knuckles-meme-png-ugandan-knuckles-png.png" 
+    alt="" onclick="adddawae()">
+    <p>DA WAE Count: <span id="dawaeCount">0</span></p>
+
+    <br><br>
+    <button id="autoClicker" onclick="buyAutoClicker()" disabled>
+    buy Auto Clicker (250)
+    </button>
+     <p>DO YOU KNOW DA WAE?</p>
+    </center>
+
+    <script>
+    let dawae = 0;
+    let autoClickerOn = false;
+    function adddawae() {
+    dawae++;
+    updateDisplay();
+    checkUpgrade();
+    }
+    
+    function updateDisplay() {
+    document.getElementById("dawaeCount").innerText = dawae;
+    }
+
+    function checkUpgrade(){
+        const btn = document.getElementById("autoClicker");
+        if (dawae >= 250 && !autoClickerOn){
+            btn.disabled = false
+        }
+    }
+
+    function buyAutoClicker() {
+        if (dawae >= 250 && !autoClickerOn){
+            dawae -=250;
+            autoClickerOn = true;
+            document.getElementById("autoClicker").innerText ="Auto Clicker bought!";
+            document.getElementById("autoClicker").disabled = true;
+            setInterval(() => {
+            dawae++;
+            updateDisplay();
+            },1000);
+         }
+    }
+
+    </script>
+   
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>duck Clicker</title>
+</head>
+<body>
+  <h1>duck clicker!</h1>
+  <p>ducks: <span id="cookieCount">0</span></p>
+
+  <!-- Cookie image to click -->
+  <img
+    src="https://media.tenor.com/KuBAp-1E3GgAAAAm/pato-aaa.webp"
+    style="width:200px; cursor:pointer;"
+    onclick="addCookie()"
+  />
+  <br><br>
+  <button  id="autoclicker" onclick="buyautoclicker()" disabled>
+  buy auto clicker (100 ducks)
+  </button>
+
+  <script>
+    let cookies = 1;
+    let autoclickeron = false
+
+    function addCookie() {
+      cookies++;
+      updateDisplay();
+      checkupgrade();
+    }
+
+    function updateDisplay() {
+      document.getElementById("cookieCount").innerText = cookies;
+      
+    }
+
+    function checkupgrade(){
+      const btn = document.getElementById("autoclicker");
+      if(cookies >= 100 && !autoclickeron){
+     btn.disabled = false;
+
+      }
+    }
+
+    function buyautoclicker(){
+   if (cookies>= 100 && !autoclickeron){
+    cookies-=100;
+    autoclickeron=true;
+    document.getElementById("autoclicker").innerText ="auto clicker bought!";
+    document.getElementById("autoclicker").disabled =true;
+    setInterval(()=> {
+      cookies++;
+      updateDisplay();
+    },100);
+   }
+
+    }
+
+  </script>
+</body>
+</html>

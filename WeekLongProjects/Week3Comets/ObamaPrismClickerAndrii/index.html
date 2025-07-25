@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obama prism clicker</title>
+</head>
+<body>
+    <h3>Welcome to my Obama prism clicker, good luck.</h3> 
+    <img id= "obama" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbWAssdqt6gptdVScR4vzgenB0KhUqYjjXFw&s" alt="">
+    <h3> Obama crystals: <span id="Click-count" >0</span></h3>
+   <button id="Upgrade1">autoclicker from alliexpress 1 <span id="UpgradePrice">50</span> clicks</button>
+   <button id="Upgrade2">Double tap obamium <span id="UpgradePrice2">75</span></button>
+<script> 
+    let clickcount = 0; 
+    let time = 1000
+    const image = document.getElementById('obama'); 
+    const clickspan = document.getElementById('Click-count');
+    const Upgrade1m = document.getElementById('Upgrade1')
+    const UpgradePrice = document.getElementById('UpgradePrice')
+    Upgrade1m.addEventListener('click' , () => {
+        if(clickcount > 49) {
+            let interval = setInterval(() => {
+                clickcount++
+                clickspan.textContent = clickcount
+            }, time)
+            clickcount -= 50
+            clickspan.textContent = clickcount 
+        }
+        
+    })
+
+    image.addEventListener('click' , () => { 
+        clickcount += clickpower
+        clickspan.textContent = clickcount
+    })
+
+    
+    let clickpower = 1
+    let clickPowerUpgradePrice = 75
+
+const clickPowerUpgradeButton = document.getElementById("Upgrade2")
+const clickPowerUpgradePriceDisplay = document.getElementById("UpgradePrice2")
+    clickPowerUpgradeButton.addEventListener("click" , () => {
+        if(clickcount >= clickPowerUpgradePrice){
+            clickpower += 2
+            clickcount -= clickPowerUpgradePrice;
+            clickPowerUpgradePrice *= 2
+            clickPowerUpgradePriceDisplay.textContent = Math.floor(clickPowerUpgradePrice)
+
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face smacker</title>
+    <style>
+        body{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>welcome to face smacker</h1>
+    <img 
+    id ="child"
+    src= "https://illustoon.com/photo/thum/5573.png" width="275">
+    <h2> Smacks: <span id="click-count">0</span></h2>
+    <div class="container">
+        <button id="autoclickerupgradebutton">Buy punching glove<span id="autoclickerprice">50</span><h3 id="amount">0</h3></button>
+        <button id="baseballbatbutton">Buy baseball bat<span id="baseballbatprice">75</span><h3 id="number">0</h3></button>
+        <button id="extraarmbutton">Buy extra arm<span id="extraarmprice">75</span><h3 id="some">0</h3></button>
+    </div>
+    
+    <div class="container">
+        <button id="sellpunchingglove">-sell punching glove-</button>
+        <button id="sellballbat">-sell base ball bat-</button>
+        <button id="sellarm">-sell extra arm-</button>
+    </div>
+
+
+    <script>
+        let baseballbatprice = 75
+        let numberofautoclickers = 0;
+        let clickCount = 0;
+        let autoclickerupgradeprice = 50;
+        let numberofballbats = 0;
+        let arms = 1;
+        let armprice = 75;
+        let numberofarms = 0;
+
+        const image = document.getElementById('child');
+        const clickSpan = document.getElementById('click-count');
+
+        const autoclickerprice = document.getElementById('autoclickerprice');
+        const autoclickerupgradebutton = document.getElementById('autoclickerupgradebutton');
+        const amountofautoclickers = document.getElementById('amount')
+        const amountofballbats = document.getElementById('number')
+        const baseballbatbutton = document.getElementById('baseballbatbutton')
+        const baseballprice = document.getElementById('baseballbatprice')
+        const extraarmbutton = document.getElementById('extraarmbutton')
+        const extraarmprice = document.getElementById('extraarmprice')
+        const amountofarms = document.getElementById('some')
+        const sellpunchingglove = document.getElementById('sellpunchingglove')
+        const sellballbat = document.getElementById('sellballbat')
+        const sellarm = document.getElementById('sellarm')
+
+        let autoClickPower = 0;
+
+        image.addEventListener("click", () => {
+            clickCount += arms
+            clickSpan.textContent = clickCount
+        })
+
+        sellpunchingglove.addEventListener("click", () => {
+            if(numberofautoclickers >= 1){
+                numberofautoclickers--
+                autoClickPower--
+                clickCount += autoclickerupgradeprice
+                autoclickerupgradeprice -= 15
+            }
+        })
+
+        sellballbat.addEventListener("click", () => {
+            if(numberofballbats >= 1){
+                numberofautoclickers--
+                autoClickPower -= 5
+                clickCount += baseballbatprice
+                baseballbatprice -= 25
+            }
+        })
+
+        sellarm.addEventListener("click", () => {
+            if(numberofarms >= 1){
+                numberofarms--
+                arms--
+                clickCount += armprice
+                armprice -= 25
+            }
+        })
+
+
+        autoclickerupgradebutton.addEventListener("click", () => {
+            if(clickCount >= autoclickerupgradeprice){
+                autoClickPower++
+                numberofautoclickers++
+                clickCount -= autoclickerupgradeprice
+                autoclickerupgradeprice += 15
+                autoclickerprice.textContent = Math.ceil(autoclickerupgradeprice)
+            }
+        })
+
+        baseballbatbutton.addEventListener("click", () => {
+            if(clickCount >= baseballbatprice){
+                autoClickPower += 5
+                numberofballbats += 1
+                clickCount -= baseballbatprice
+                baseballbatprice += 25
+                baseballprice.textContent = baseballbatprice
+            }
+        })
+
+          extraarmbutton.addEventListener("click", () => {
+            if(clickCount >= armprice){
+                arms += 1
+                numberofarms += 1
+                clickCount -= armprice
+                armprice += 25
+                extraarmprice.textContent = armprice
+            }
+        })
+
+        function autoClicker(){
+            clickCount += autoClickPower
+            clickSpan.textContent = clickCount
+            amountofautoclickers.textContent = numberofautoclickers
+            amountofballbats.textContent = numberofballbats
+            amountofarms.textContent = numberofarms
+        }
+
+        let interval = setInterval(autoClicker,1000)
+    </script>
+
+
+</body>
+</html>

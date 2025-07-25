@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penguin Clicker</title>
+</head>
+<body>
+    <h3>Click The Penguin</h3>
+    <img 
+    id ="Penguin"
+    src ="https://www.shutterstock.com/image-vector/penguin-flat-vector-illustration-on-600nw-2459383763.jpg" alt="" width ="450" height ="450">
+    <h2> Clicks: <span id ="click-count">0</span></h2>
+    <button id="autoClickerUpgradeButton">Buy an Auto Clicker <span id="autoClickerPrice">50</span> Clicks</button>
+    <button id="clickPowerUpgradeButton"> Buy Click Power +1 <span id= "clickPowerPrice">75</span> Clicks</button>
+<script>
+    let clickCount = 0;
+    let autoClickerUpgradePrice = 50;
+
+    const image = document.getElementById('Penguin');
+    const clickSpan = document.getElementById('click-count');
+
+    const autoClickerUpgradeButton = document.getElementById("autoClickerUpgradeButton")
+    const autoClickerPrice = document.getElementById("autoClickerPrice")
+
+    let autoClickPower = 0;
+
+    image.addEventListener("click", () => {
+        clickCount += clickPower
+        clickSpan.textContent = Math.floor(clickCount)
+    })
+
+    autoClickerUpgradeButton.addEventListener("click", () => {
+        
+        if(clickCount >= autoClickerUpgradePrice){
+            if (autoClickerUpgradePrice == 50 & clickPower == 1) {
+                let interval = setInterval(autoClicker, 1000)
+            }
+            
+            clickCount -= autoClickerUpgradePrice;
+            autoClickerUpgradePrice *= 1.25
+            autoClickerPrice.textContent = Math.floor(autoClickerUpgradePrice);
+            autoClickPower ++;
+        }
+    })
+    
+    
+    function autoClicker(){
+        clickCount += autoClickPower;
+        clickSpan.textContent = Math.floor(clickCount)
+    }
+
+    
+
+    let clickPower = 1
+    let clickPowerUpgradePrice = 75
+const clickPowerUpgradeButton = document.getElementById("clickPowerUpgradeButton")
+const clickPowerUpgradePriceDisplay = document.getElementById("clickPowerPrice")
+    clickPowerUpgradeButton.addEventListener("click", () => {
+        if(clickCount >= clickPowerUpgradePrice){
+            clickPower++;
+            clickCount -= clickPowerUpgradePrice;
+            clickPowerUpgradePrice *= 1.50
+            clickPowerUpgradePriceDisplay.textContent = Math.floor(clickPowerUpgradePrice);
+        }
+    })
+</script>
+</body>
+</html>
