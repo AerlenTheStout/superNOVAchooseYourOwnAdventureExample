@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G's Programing</title>
+</head>
+<body> 
+
+    
+        <h3>You Have- <span id="Rocket">0</span> -Netherite Ingots</h3>
+    
+        <img id="image" width="250" src= "https://art.pixilart.com/276667dccdd8e42.png" alt="">
+        <br><br>
+        
+        <div style="display: flex; justify-content: flex-end; margin-right: 20px;">
+            <button id="autoClickerBuyBotton">Rocket Autoclicker: <span id="autoClickerPriceDisplay">100</span>
+            </button>
+        </div>
+    <script>
+        const clicksDisplay = document.getElementsByTagName("span")[0];
+        const image = document.getElementsByTagName("img")[0];
+        const autoClickerPriceDisplay = document.getElementById("autoClickerPriceDisplay");
+
+        let clicks = 0;
+        let autoClickerPrice = 100
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+        }
+        function updatePrice(){
+            autoClickerPriceDisplay.innerText = autoClickerPrice;
+        }
+
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay();
+        })
+
+        autoClickerBuyBotton.addEventListener("click",() => {
+            if(clicks >= autoClickerPrice){
+                window.setInterval(() => {
+                    clicks++;
+                    updateDisplay()
+                }, 1000)
+            
+                clicks -= autoClickerPrice
+                autoClickerPrice *= 1.5
+                updatePrice();
+            }
+        })
+
+
+    </script>
+
+</body>
+</html> 

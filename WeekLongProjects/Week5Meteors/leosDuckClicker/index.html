@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>duck Clicker</title>
+  <meta charset="UFT-8">
+</head>
+<body>
+  <audio id="clickSound" src="mac-quack.mp3"></audio>
+  <h1>duck clicker!</h1>
+  <p>ducks: <span id="cookieCount">0</span></p>
+
+  <!-- Cookie image to click -->
+  <img
+    src="https://media.tenor.com/KuBAp-1E3GgAAAAm/pato-aaa.webp"
+    style="width:200px; cursor:pointer;"
+    onclick="addCookie();"
+    id="ffffffff"/>
+  <br><br>
+  <button  id="autoclicker" onclick="buyautoclicker()" disabled>
+  buy auto clicker (100 ducks)
+  </button>
+  <button id="buy" onclick="buyupgrade()" disabled>Clicker x (50 ducks)</button>
+<audio>
+  <source id="clickSound" src="mac-quack.MP3" type="audio/mpeg">
+</audio>
+  <script>
+    let i = 1
+    let cookies = 0;
+    let howmuchadd = 1;
+    let speed = 100
+
+    function addCookie() {
+      cookies+= howmuchadd;
+      checkupgrade();
+      check();
+      updateDisplay();
+      playSound()
+    }
+    function updateDisplay() {
+      document.getElementById("cookieCount").innerText = cookies;
+      
+    }
+      function playSound() {
+    var sound = document.getElementById("clickSound");
+    sound.play();
+      }
+
+    function checkupgrade(){
+      const btn = document.getElementById("autoclicker");
+      if(cookies >= 100){
+     btn.disabled = false; 
+    }}
+
+
+    function buyautoclicker(){
+   if (cookies>= 100){
+    cookies-=100;
+    document.getElementById("autoclicker").disabled =true;
+    speed -= 1;
+    setInterval(()=>{
+      cookies++;
+      updateDisplay();
+      updateDisplay();
+      checkupgrade();
+    },speed);
+  }
+}
+     const aaa = document.getElementById("buy");
+     function check() {
+      if(cookies >= 50) {
+      aaa.disabled = false;
+      checkupgrade()
+      }
+    }
+     function buyupgrade() {
+      howmuchadd += 4;
+      cookies -= 50;
+      aaa.disabled = true;
+      updateDisplay()
+      checkupgrade();
+    };
+  </script>
+  <style>
+    body {
+      background-color: aquamarine;
+    }
+    button {
+      background-color: green;
+      color: white;
+    }
+    button:disabled {
+      background-color: red;
+    }
+    #ffffffff:hover {
+      scale: 1.2;
+    }
+  </style>
+  <center></center>
+</body>
+</html>

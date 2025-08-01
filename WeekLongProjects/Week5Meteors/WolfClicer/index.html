@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wolfclicer</title>
+</head>
+<body>
+
+<center>
+    <h3>wolves: <span id="spane">0</span></h3>
+<img width="300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSAxS3dj9JMWgI7fmHZrWLxiYodAOVkPz4UQ&s" alt="" id="image"> 
+<button id="autoClickerBuyButton">click me to buy the autoclicker : <span id="auto">50</span></button>
+
+</center>
+
+<script>
+    const clicksDisplay = document.getElementById("spane");
+    const image = document.getElementById("image");
+    const priceDesplay = document.getElementById("auto");
+
+    let clicks = 0;
+    let autoClickerPrice = 50;
+
+    function updateDisplay(){
+        clicksDisplay.textContent = clicks;
+        priceDesplay.textContent = autoClickerPrice;
+    }
+
+    image.addEventListener("click",() => {
+      clicks++;
+      updateDisplay();  
+    })
+
+    autoClickerBuyButton.addEventListener("click", () => {
+         if(clicks >= autoClickerPrice){
+          window.setInterval(() => {
+           clicks++;
+           updateDisplay()
+         }, 1000)
+
+         clicks -= autoClickerPrice
+         autoClickerPrice *= 1.5
+        }
+    })
+   
+   
+</script>
+
+</body>
+</html>

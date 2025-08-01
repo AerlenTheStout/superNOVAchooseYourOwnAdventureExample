@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vbucks cliker 2025</title>//
+</head>
+<body>
+
+    <center>
+        <h3>vbucks: <span id="vbucksDisplay">0</span></h3>
+        <img id="image" width="300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJiZipvP1nHa2KpnRf8Dmwq9V31N_J1vJfWw&s" alt="">
+         <button id="autoClickerBuyButton">add a more money to buy vbucks : <span>100</span></button>
+    </center>
+
+    <script>
+        const clicksDisplay = document.getElementById("vbucksDisplay")
+        const image = document.getElementById("image")
+
+        const autoClickerbuybutton = document.getElementById("autoClickerBuyButton")
+        const autoClickerPriceDisplay = document.getElementById("autoClickerPriceDisplay")
+
+        let clicks = 0;
+        let autoClickerPrice =100;
+
+        function updateDisplay(){ 
+         clicksDisplay.textContent = clicks;
+        }
+
+       image.addEventListener("click",() => {
+           clicks++;
+           updateDisplay();
+       })
+
+       autoClickerbuybutton.addEventListener("click", () => {
+        if(clicks >= autoClickerPrice){
+                    window.setInterval(() => {
+                        clicks++;
+                        updateDisplay()
+                    }, 1000)
+                clicks -= autoClickerPrice
+                autoClickerPrice *=1.5
+            }
+       })
+        
+
+
+
+      
+    </script> 
+</body>
+</html>

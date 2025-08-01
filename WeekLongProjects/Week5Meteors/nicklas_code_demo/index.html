@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie clicker</title>
+</head>
+<body>
+
+    <center>
+    <h3>Cookies: <span>0</span></h3>
+      <img width="300" src="https://www.dessertfortwo.com/wp-content/uploads/2023/04/Single-Serve-Chocolate-Chip-Cookie-5-735x1103.jpg" alt="">    
+    
+    </center>
+
+   <script>
+       const clicksDisplay = document.getElementsByTagName("span")[0];
+       const image = document.getElementsByTagName("img")[0];
+   
+        let clicks = 0;
+   
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+        }
+
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay();
+        })
+</script>
+
+</body>
+</html>         

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>Deaths of grains of flour: <span>0</span></h3>
+
+<img width= "300" src="https://www.simplyrecipes.com/thmb/IZKR8wzjPM_6ZRa16nbN5JkyZUg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2016__09__Buttermilk-Waffles-horiz-a-2000-44a7abeb997c4b549d92576c3043bac7.jpg" alt="">
+
+
+<script>
+const clicksDisplay = document.getElementsByTagName ("span") [0];
+const image = document.getElementsByTagName("img")[0];
+
+let clicks = 0;
+
+function updateDisplay (){
+    clicksDisplay.textContent = clicks;
+}
+
+image.addEventListener("click",() => {
+    clicks++; 
+    updateDisplay();
+})
+
+</script>
+
+</body>
+</html>

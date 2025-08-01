@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=divice=width, initial-scale=1.0">
+    <title>cookie clicker game</title>
+</head>
+<body>
+    <center>
+        <h3>energy to be a big back and eat it: <span>0</span></h3>
+        <img width="300" src="https://www.dessertfortwo.com/wp-content/uploads/2023/04/Single-Serve-Chocolate-Chip-Cookie-5-735x1103.jpg" alt="">
+        <button id ="autoClickerBuyButton">click Me to buy the AutoClicker :<span
+            id="AutoClickerpriceDisplay">50</span></button>
+    </center>
+
+    <script>
+        const clicksDisplay = document.getElementsByTagName("span")[0];
+        const image = document.getElementsByTagName("img")[0];
+        const AutoClickerBuyButton = document.getElementById
+        ("autoClickerBuyButton")
+        const AutoClickerpriceDisplay = document.getElementById
+        ("autoClicerPriceDisplay")
+
+        let clicks = 0;
+        let AutoClickerprice = 50;
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+        }
+
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay();
+        })
+        AutoClickerBuyButton.addEventListener("click", () => {
+            window.setInterval(()=> {
+              clicks++;
+              updateDisplay()
+            }, 1000)
+        })
+        
+       
+            
+        
+    </script>
+</body>
+</html>

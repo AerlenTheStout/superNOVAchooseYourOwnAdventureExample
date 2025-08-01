@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>turtule_cliker</title>
+</head>
+<body>
+     
+     <center>
+     <h5>welcome to turtule cliker, The game </h5>
+     <h5>where you click  the turtule to get turtules</h5>
+     <h3>turtules: <span id="energyDisplay">0</span></h3>
+     <img id="image" width="300" src="https://images.squarespace-cdn.com/content/v1/5369465be4b0507a1fd05af0/1528837069483-LD1R6EJDDHBY8LBPVHIU/randall-ruiz-272502.jpg" alt="">
+     <br><br>
+     <button id="autoClickerBuyButton">click Me to Buy the autoClicker : <span id="autoClickerPriceDisplay">150</span></button>
+     </center>
+
+    
+    
+    <script>
+      const clicsDisplay = document.getElementById("energyDisplay");
+      const image = document.getElementById("image");
+
+      const autoClickerBuyButton = document.getElementById("autoClickerBuyButton")
+      const autoClickerPriceDisplay = document.getElementById("autoClickerPriceDisplay")
+      let clicks = 0;
+      let autoClickerPrice = 150;
+
+      function updateDisplay(){
+          clicsDisplay.textContent = clicks;
+      }
+      function updatePrice(){
+        autoClickerPriceDisplay.innerText = autoClickerPrice;
+      }
+
+      image.addEventListener("click",() => {
+        clicks++;
+        updateDisplay();
+      })
+
+      autoClickerBuyButton.addEventListener("click", () =>  {
+          if(clicks >= autoClickerPrice){
+      window.setInterval(() => {
+          clicks++;
+          updateDisplay();
+      }, 1000)
+         
+      clicks -= autoClickerPrice
+      autoClickerPrice *= 1.5 
+      updatePrice();
+    }
+
+        
+      })
+
+    
+    </script>
+<body>
+<html>

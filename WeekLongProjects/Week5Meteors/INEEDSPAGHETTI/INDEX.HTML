@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>you hav: <span id="catsDisplay">0</span> cats</h3>
+    <img id="maxwell" src="https://i.scdn.co/image/ab67616d00001e0227047720beaa8d2b4c236380" alt=""> 
+<button
+id="autoClickerBuyButton">Click me for auto income : <span
+id="autoCickerPriceDisplay">150</span> cats</button>
+
+    <script>
+        const clicksDisplay = document.getElementById("catsDisplay");
+        const image = document.getElementById("maxwell")
+
+const autoClickerBuyButton = document.getElementById
+("autoClickerBuyButton")
+        const autoClickerPriceDisplay = document.getElementById
+        ("autoClickerPriceDisplay")
+        let clicks = 0;
+let autoClickerPrice = 150;
+        function updateDisplay(){
+           clicksDisplay.textContent = clicks;
+        }
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay();
+        })
+
+autoClickerBuyButton.addEventListener("click", () => {
+
+    if(clicks >= autoClickerPrice){
+window.setInterval(() => {
+      clicks++;
+        updateDisplay()
+    }, 100)
+    clicks -= autoClickerPrice
+    autoClickerPrice *= 1
+
+    }
+
+})
+
+    
+    </script>
+
+
+
+</body>
+</html>

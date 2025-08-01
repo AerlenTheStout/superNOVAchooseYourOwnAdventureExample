@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Clicker 2025</title>
+</head> 
+<body>  
+    <center>
+        <h2>Dunks Made: <span id="clicksDisplay">0</span><h2>
+        <img id="img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOesUoRg17zyyhe1ag_y5eo2rgVcs2x7-Xig&s" alt="">
+        <button id="autoClickerBuyButton">Buy autoclicker for  <span id="AutoClickerPriceDisplay">200 Dunks</span></button>
+        <button id="powerUpgradeButton">buy more power <span id="powerUpgradePriceDisplay">100</span></button>
+    </center>
+    
+    <script>
+        const clicksDisplay = document.getElementById("clicksDisplay")
+        const image = document.getElementById("img")
+
+        const autoClickerBuyButton = document.getElementById("autoClickerBuyButton")
+        const autoClickerPriceDisplay = document.getElementById("AutoClickerPriceDisplay")
+
+        const powerUpgradeButton = document.getElementById("powerUpgradeButton")
+        const powerUpgradePriceDisplay = document.getElementById("powerUpgradePriceDisplay")
+
+
+        let clicks = 0;
+        let autoClickerPrice = 500
+        let powerUpgradePrice = 200
+
+        let howMuchToAdd = 1
+
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+            powerUpgradePriceDisplay.textContent = powerUpgradePrice
+            autoClickerPriceDisplay.textContent = autoClickerPrice
+        }
+
+        image.addEventListener("click",()=>{
+            clicks +=howMuchToAdd;
+            updateDisplay();
+        })
+
+        autoClickerBuyButton.addEventListener("click",() => {
+            if(clicks >= autoClickerPrice){
+                window.setInterval(() =>{
+                    clicks++;
+                    updateDisplay()
+                }, 300)
+
+                clicks -= autoClickerPrice
+                autoClickerPrice *= 1.5
+            }
+        }) 
+
+        powerUpgradeButton.addEventListener("click", () => {
+            if(clicks >= powerUpgradePrice){
+                howMuchToAdd += 1;
+                clicks -= powerUpgradePrice
+                powerUpgradePrice *= 1.5
+            }
+        })
+
+
+    </script>
+</body>
+</html>     

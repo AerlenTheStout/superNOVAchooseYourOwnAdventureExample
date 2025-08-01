@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <center>
+        <h3>U have: <span>0</span> energy</h3>
+        <img width="300" src="https://media.tenor.com/MBbTxmQOeFcAAAAM/steve-steve-le-poisson.gif" alt="">
+    </center>
+
+    <script>
+        const clicksDisplay = document.getElementsByTagName("span")[0];
+        const image = document.getElementsByTagName("img")[0]
+        
+        let clicks = 0;
+        
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+        }
+
+        image.addEventListener("clicks",() => {
+            clicks++;
+        })
+     </script>
+       
+
+</body>
+</html>

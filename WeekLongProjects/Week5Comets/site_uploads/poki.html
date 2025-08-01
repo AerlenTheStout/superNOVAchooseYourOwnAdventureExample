@@ -1,0 +1,361 @@
+<html>
+    <head>
+        <title>This is where you can play games at school poki.com</title>
+
+        <body>
+            <p style="font-size:20px">
+                ℙ𝕃𝔸𝕐 𝔾𝔸𝕄𝔼𝕊ඞා⠀⠀
+   
+            </p>
+        </body>
+    </head>
+    <img class="mimg" style="color: rgb(36, 69, 125);" height="180" width="28600" src="https://th.bing.com/th/id/OIP.Qw5jReTrV6fbWEg8O89sMwHaEK?w=286&amp;h=180&amp;c=7&amp;r=0&amp;o=7&amp;pid=1.7&amp;rm=3" alt="Image result for caseoh" data-thhnrepbd="1" data-bm="157">
+    <body>
+        <p style="font-size: 30px ">𝔾𝕒𝕞𝕖 𝕒𝕣𝕖 𝕓𝕖𝕝𝕠𝕨</p>
+    </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ultimate Cookie Clicker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f7f2e0;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #game-container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    #cookie {
+      width: 200px;
+      height: 200px;
+      background: url('https://orteil.dashnet.org/cookieclicker/img/perfectCookie.png') no-repeat center/cover;
+      margin: 20px auto;
+      cursor: pointer;
+    }
+
+    .building {
+      margin: 10px;
+      border: 2px solid #333;
+      padding: 10px;
+      border-radius: 10px;
+      background: #fffbe0;
+    }
+
+    button {
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #golden-cookie {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: url('https://orteil.dashnet.org/cookieclicker/img/goldCookie.png') no-repeat center/cover;
+      display: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #dragon {
+      width: 100px;
+      height: 100px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Dragon_icon_2.svg/512px-Dragon_icon_2.svg.png') no-repeat center/contain;
+      margin: 20px auto;
+      display: none;
+      cursor: pointer;
+    }
+
+    #prestige-container {
+      margin-top: 30px;
+      padding: 10px;
+      background: #e0f7fa;
+      border: 2px solid #0097a7;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Ultimate Cookie Clicker</h1>
+    <h2>Cookies: <span id="cookie-count">0</span></h2>
+    
+    <div id="cookie" title="Click me!"></div>
+    <div id="golden-cookie"></div>
+    <div id="dragon" title="Summon Dragon!"></div>
+
+    <div id="buildings">
+      <div class="building" id="autoclicker">
+        <h3>Auto Clicker</h3>
+        <p>Cost: <span class="cost">15</span></p>
+        <p>Owned: <span class="count">0</span></p>
+        <button class="buy">Buy Auto Clicker</button>
+      </div>
+
+      <div class="building" id="grandma">
+        <h3>Grandma</h3>
+        <p>Cost: <span class="cost">100</span></p>
+        <p>Owned: <span class="count">0</span></p>
+        <button class="buy">Buy Grandma</button>
+      </div>
+
+      <div class="building" id="factory">
+        <h3>Factory</h3>
+        <p>Cost: <span class="cost">500</span></p>
+        <p>Owned: <span class="count">0</span></p>
+        <button class="buy">Buy Factory</button>
+      </div>
+    </div>
+
+    <div id="upgrades">
+      <h2>Upgrades</h2>
+      <div id="upgrade-list"></div>
+    </div>
+
+    <div id="achievements">
+      <h2>Achievements</h2>
+      <ul id="achievement-list"></ul>
+    </div>
+
+    <div id="prestige-container">
+      <h2>Prestige</h2>
+      <p>Level: <span id="prestige-level">0</span></p>
+      <p>Bonus per click: +<span id="prestige-bonus">0</span></p>
+      <button id="prestige-button">Prestige Now (Need 10000 cookies)</button>
+    </div>
+  </div>
+
+  <!-- Background Music -->
+  <audio id="bg-music" loop autoplay>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/26/audio_6b3cb7e83f.mp3?filename=happy-background-music-11254.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Click Sound -->
+  <audio id="click-sound">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_e39c21b327.mp3?filename=click-124467.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let cookies = 0;
+    let cookiePerClick = 1;
+    let goldenCookieBonusMultiplier = 1;
+    let prestigeLevel = 0;
+
+    let buildings = {
+      autoclicker: { cost: 15, count: 0, cps: 1 },
+      grandma: { cost: 100, count: 0, cps: 1 },
+      factory: { cost: 500, count: 0, cps: 5 }
+    };
+
+    let upgrades = [
+      {
+        id: "dragon-wisdom",
+        name: "Dragon's Wisdom",
+        cost: 2000,
+        building: null,
+        effect: () => { cookiePerClick *= 2 },
+        purchased: false
+      },
+      {
+        id: "grandma-cookbook",
+        name: "Grandma's Cookbook",
+        cost: 3000,
+        building: "grandma",
+        effect: () => { buildings.grandma.cps *= 2 },
+        purchased: false
+      },
+      {
+        id: "factory-efficiency",
+        name: "Factory Efficiency",
+        cost: 4000,
+        building: "factory",
+        effect: () => { buildings.factory.cps *= 2 },
+        purchased: false
+      },
+      {
+        id: "golden-fingers",
+        name: "Golden Fingers",
+        cost: 2500,
+        building: null,
+        effect: () => { cookiePerClick += 5 },
+        purchased: false
+      },
+      {
+        id: "baking-mastery",
+        name: "Baking Mastery",
+        cost: 5000,
+        building: null,
+        effect: () => {
+          for (let b in buildings) {
+            buildings[b].cps *= 1.5;
+          }
+        },
+        purchased: false
+      },
+      {
+        id: "cookie-magnet",
+        name: "Cookie Magnet",
+        cost: 3500,
+        building: null,
+        effect: () => { goldenCookieBonusMultiplier = 2 },
+        purchased: false
+      },
+      {
+        id: "prestige-boost",
+        name: "Prestige Boost",
+        cost: 4500,
+        building: null,
+        effect: () => { cookiePerClick += prestigeLevel },
+        purchased: false
+      }
+    ];
+
+    const cookieEl = document.getElementById("cookie");
+    const cookieCountEl = document.getElementById("cookie-count");
+    const upgradeList = document.getElementById("upgrade-list");
+    const goldenCookie = document.getElementById("golden-cookie");
+    const dragonEl = document.getElementById("dragon");
+    const clickSound = document.getElementById("click-sound");
+
+    const prestigeLevelEl = document.getElementById("prestige-level");
+    const prestigeBonusEl = document.getElementById("prestige-bonus");
+    const prestigeButton = document.getElementById("prestige-button");
+
+    function updateUI() {
+      cookieCountEl.textContent = Math.floor(cookies);
+      for (let id in buildings) {
+        const b = buildings[id];
+        document.querySelector(`#${id} .cost`).textContent = Math.floor(b.cost);
+        document.querySelector(`#${id} .count`).textContent = b.count;
+        document.querySelector(`#${id} .buy`).disabled = cookies < b.cost;
+      }
+
+      upgradeList.innerHTML = '';
+      upgrades.forEach(upg => {
+        if (!upg.purchased && cookies >= upg.cost) {
+          const btn = document.createElement("button");
+          btn.textContent = upg.name + " - " + upg.cost + " cookies";
+          btn.onclick = () => {
+            if (cookies >= upg.cost) {
+              cookies -= upg.cost;
+              upg.effect();
+              upg.purchased = true;
+              updateUI();
+            }
+          };
+          upgradeList.appendChild(btn);
+        }
+      });
+
+      prestigeLevelEl.textContent = prestigeLevel;
+      prestigeBonusEl.textContent = prestigeLevel;
+    }
+
+    cookieEl.addEventListener("click", () => {
+      cookies += cookiePerClick;
+      clickSound.currentTime = 0;
+      clickSound.play();
+      updateUI();
+    });
+
+    document.querySelectorAll(".buy").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.parentElement.id;
+        const b = buildings[id];
+        if (cookies >= b.cost) {
+          cookies -= b.cost;
+          b.count++;
+          b.cost = Math.floor(b.cost * 1.15);
+          updateUI();
+        }
+      });
+    });
+
+    setInterval(() => {
+      let cps = 0;
+      for (let id in buildings) {
+        const b = buildings[id];
+        cps += b.count * b.cps;
+      }
+
+      // Add cps cookies
+      cookies += cps;
+
+      // Auto Clicker triggers real clicks for bonus cookiePerClick per autoclicker owned:
+      cookies += buildings.autoclicker.count * cookiePerClick;
+
+      updateUI();
+    }, 1000);
+
+    // Golden Cookie
+    function spawnGoldenCookie() {
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 100);
+      goldenCookie.style.left = x + "px";
+      goldenCookie.style.top = y + "px";
+      goldenCookie.style.display = "block";
+      setTimeout(() => {
+        goldenCookie.style.display = "none";
+      }, 8000);
+    }
+
+    goldenCookie.addEventListener("click", () => {
+      cookies += 100 * cookiePerClick * goldenCookieBonusMultiplier;
+      goldenCookie.style.display = "none";
+      updateUI();
+    });
+
+    setInterval(() => {
+      if (Math.random() < 0.1) spawnGoldenCookie();
+    }, 20000);
+
+    // Dragon Spawner
+    setInterval(() => {
+      if (Math.random() < 0.05) {
+        dragonEl.style.display = "block";
+        setTimeout(() => {
+          dragonEl.style.display = "none";
+        }, 10000);
+      }
+    }, 30000);
+
+    dragonEl.addEventListener("click", () => {
+      cookies += 1000;
+      dragonEl.style.display = "none";
+      updateUI();
+    });
+
+    // Prestige
+    prestigeButton.addEventListener("click", () => {
+      if (cookies >= 10000) {
+        cookies = 0;
+        prestigeLevel++;
+        cookiePerClick += 1;
+        updateUI();
+      }
+    });
+
+    // Save & Load Prestige
+    setInterval(() => {
+      localStorage.setItem("cookieClickerPrestige", JSON.stringify({ prestigeLevel }));
+    }, 5000);
+
+    window.addEventListener("load", () => {
+      const prestigeSave = JSON.parse(localStorage.getItem("cookieClickerPrestige"));
+      if (prestigeSave) {
+        prestigeLevel = prestigeSave.prestigeLevel;
+        cookiePerClick += prestigeLevel;
+      }
+      updateUI();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <center>
+        <h3>U have: <span id="kills">0</span> kills</h3>
+        <img id="image" width="300" src="https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcSdsrvUs2jyc0BwI1KFoQIaSa9jjmBCSQGLjCdZUM2_skS-lUnNC7XIdyPA_BiAZyYzLjimxYeJyw-m9mo"alt="">
+
+        <button id="buyAutoClicker">Click to buy autoclicker : <span id="autoClickerPrice">50</span></button>
+
+    </center>
+
+    <script>
+        const clicksDisplay = document.getElementById("kills")
+        const image = document.getElementById("image")
+
+        const autoclickerBuyButton = document.getElementById("buyAutoClicker")
+        const autoClickerPriceDinplay = document.getElementById("autoClickerPrice")
+
+        let clicks = 0; 
+        let autoClickerPrice =50
+
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+            autoClickerPriceDinplay.textContent = autoClickerPrice  
+        }
+
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay()
+        
+        })
+
+        autoclickerBuyButton.addEventListener("click", () => {
+            if(clicks >= autoClickerPrice){
+             window.setInterval(() => {
+                clicks++;
+                updateDisplay();
+
+            }, 1000)
+            clicks -= autoClickerPrice
+            autoClickerPrice *= 2
+            updateDisplay()
+            }
+           
+        })
+
+        
+    </script>
+ 
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cap Kingdom Prototype</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      overflow: hidden;
+      background: #87CEEB;
+      font-family: sans-serif;
+    }
+    #gameCanvas {
+      display: block;
+      background: #6CC24A;
+    }
+    #hud {
+      position: absolute;
+      top: 10px; left: 10px;
+      color: #fff; font-size: 18px;
+      text-shadow: 1px 1px 2px #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="450"></canvas>
+  <div id="hud">Moons: 0</div>
+
+  <script>
+  // ==== UTILITY CLASSES ====
+  class Vec { constructor(x, y) { this.x = x; this.y = y; } }
+  class Rect {
+    constructor(x,y,w,h) { this.x=x; this.y=y; this.w=w; this.h=h; }
+    intersects(o) {
+      return !(o.x>this.x+this.w || o.x+o.w<this.x ||
+               o.y>this.y+this.h || o.y+o.h<this.y);
+    }
+  }
+
+  // ==== INPUT HANDLER ====
+  const keys = {};
+  window.addEventListener("keydown", e=>keys[e.code]=true);
+  window.addEventListener("keyup",   e=>keys[e.code]=false);
+
+  // ==== GAME CONSTANTS ====
+  const TILE = 32, GRAVITY = 0.8, FRICTION=0.8;
+  const JUMP_FORCE = 15, FROG_JUMP=20;
+  const REQUIRED_MOONS = 3;
+
+  // ==== TILEMAP (0=air,1=ground,2=frog spawn,3=moon,4=ship) ====
+  const level = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,3,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0],
+    [0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0],
+    [1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1]
+  ];
+
+  // ==== ENTITY BASE CLASS ====
+  class Entity {
+    constructor(x,y,w,h) {
+      this.pos = new Vec(x,y);
+      this.vel = new Vec(0,0);
+      this.size = new Vec(w,h);
+      this.onGround = false;
+      this.active = true;
+    }
+    get rect() { return new Rect(this.pos.x, this.pos.y, this.size.x, this.size.y); }
+  }
+
+  // ==== PLAYER CLASS ====
+  class Player extends Entity {
+    constructor(x,y){
+      super(x,y,28,28);
+      this.state='mario';  // or 'frog'
+      this.facing=1;       // -1 left, 1 right
+      this.canJump=true;   // for no-double-jump
+    }
+    update(){
+      // horizontal movement
+      if (keys.ArrowLeft){ this.vel.x = -4; this.facing=-1; }
+      else if (keys.ArrowRight){ this.vel.x = 4; this.facing=1; }
+      else this.vel.x *= FRICTION;
+
+      // jump
+      if (keys.KeyZ && this.onGround && this.canJump) {
+        this.vel.y = -(this.state==='frog'?FROG_JUMP:JUMP_FORCE);
+        this.onGround=false; this.canJump=false;
+      }
+      if (!keys.KeyZ) this.canJump=true;
+
+      // throw hat
+      if (keys.KeyX && !hat.active) {
+        hat.spawn(this.pos.x+this.size.x/2, this.pos.y+10, this.facing);
+      }
+
+      // apply gravity
+      this.vel.y += GRAVITY;
+      this.vel.x = Math.max(-6,Math.min(6,this.vel.x));
+      this.pos.x += this.vel.x;
+      this.collideX();
+      this.pos.y += this.vel.y;
+      this.collideY();
+
+      // possession toggle
+      if (keys.KeyC && frogSpawn.active && this.rect.intersects(frogSpawn.rect)) {
+        this.state = this.state==='mario'?'frog':'mario';
+        // simple sound/flash could go here
+        keys.KeyC=false;
+      }
+    }
+    collideX(){
+      level.forEach((row,i)=>row.forEach((cell,j)=>{
+        if (cell===1) {
+          let r = new Rect(j*TILE,i*TILE,TILE,TILE);
+          if (this.rect.intersects(r)){
+            if (this.vel.x>0) this.pos.x = r.x - this.size.x;
+            else if (this.vel.x<0) this.pos.x = r.x + r.w;
+            this.vel.x=0;
+          }
+        }
+      }));
+    }
+    collideY(){
+      this.onGround=false;
+      level.forEach((row,i)=>row.forEach((cell,j)=>{
+        if (cell===1) {
+          let r = new Rect(j*TILE,i*TILE,TILE,TILE);
+          if (this.rect.intersects(r)){
+            if (this.vel.y>0){
+              this.pos.y = r.y - this.size.y;
+              this.onGround=true;
+            } else if (this.vel.y<0){
+              this.pos.y = r.y + r.h;
+            }
+            this.vel.y=0;
+          }
+        }
+      }));
+    }
+    draw(ctx){
+      ctx.fillStyle = (this.state==='frog'?'#006400':'#FF0000');
+      ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+    }
+  }
+
+  // ==== FROG SPAWN ====
+  const frogSpawn = new Entity(16*TILE,1*TILE,28,28);
+
+  // ==== HAT CLASS ====
+  class Hat extends Entity {
+    constructor(){
+      super(0,0,20,20);
+      this.active=false;
+    }
+    spawn(x,y,dir){
+      this.pos.x=x; this.pos.y=y;
+      this.vel.x = dir * 8; this.vel.y = -4;
+      this.active=true;
+    }
+    update(){
+      if (!this.active) return;
+      this.vel.y += GRAVITY*0.5;
+      this.pos.x+=this.vel.x; this.pos.y+=this.vel.y;
+      // collide with ground
+      level.forEach((row,i)=>row.forEach((c,j)=>{
+        if (c===1){
+          let r=new Rect(j*TILE,i*TILE,TILE,TILE);
+          if (this.rect.intersects(r)){
+            this.active=false;
+          }
+        }
+      }));
+    }
+    draw(ctx){
+      if (!this.active) return;
+      ctx.fillStyle='#FFFF00';
+      ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+    }
+  }
+  const hat = new Hat();
+
+  // ==== MOON CLASS ====
+  class Moon extends Entity {
+    constructor(x,y){
+      super(x,y,20,20);
+      this.collected=false;
+    }
+    update(){
+      if (this.collected) return;
+      if (player.rect.intersects(this.rect)){
+        this.collected=true;
+        moons++;
+        document.getElementById('hud').innerText = 'Moons: '+moons;
+      }
+    }
+    draw(ctx){
+      if (this.collected) return;
+      ctx.fillStyle='#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(this.pos.x+10,this.pos.y+10,10,0,2*Math.PI);
+      ctx.fill();
+    }
+  }
+
+  // ==== SHIP CLASS ====
+  class Ship {
+    constructor(x,y){
+      this.x=x; this.y=y;
+      this.active=false;
+    }
+    update(){
+      if (!this.active && moons>=REQUIRED_MOONS) {
+        this.active=true;
+      }
+    }
+    draw(ctx){
+      if (!this.active) return;
+      ctx.fillStyle='#8B4513';
+      ctx.fillRect(this.x,this.y,60,40);
+      ctx.fillStyle='#FFFFFF';
+      ctx.fillRect(this.x+10,this.y+5,40,10);
+    }
+  }
+
+  // ==== INITIALIZE ====
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const player = new Player(64,64);
+  let moons = 0;
+  const moonList = [];
+  const ship = new Ship(22*TILE,1*TILE);
+
+  // spawn moons from map
+  level.forEach((row,i)=>row.forEach((cell,j)=>{
+    if (cell===3) moonList.push(new Moon(j*TILE+6,i*TILE+6));
+  }));
+
+  // ==== MAIN LOOP ====
+  function loop(){
+    // update
+    player.update();
+    hat.update();
+    moonList.forEach(m=>m.update());
+    ship.update();
+
+    // draw
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // draw tiles
+    level.forEach((row,i)=>row.forEach((cell,j)=>{
+      if (cell===1){
+        ctx.fillStyle='#654321';
+        ctx.fillRect(j*TILE,i*TILE,TILE,TILE);
+      }
+    }));
+
+    // draw entities
+    frogSpawn.draw = function(c){
+      if (player.state==='mario') {
+        c.fillStyle='#00FF00';
+        c.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+      }
+    };
+    frogSpawn.draw(ctx);
+    player.draw(ctx);
+    hat.draw(ctx);
+    moonList.forEach(m=>m.draw(ctx));
+    ship.draw(ctx);
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+  </script>
+</body>
+</html>

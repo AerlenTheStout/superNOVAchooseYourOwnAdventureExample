@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie clicker</title>
+</head>
+<body>
+    <center>
+    <h3>Cookies: <span id = "cookieDispaly">0</span></h3>
+    <img id="image" width="300" src= "https://www.onceuponachef.com/images/2021/11/Best-Chocolate-Chip-Cookies-1200x1499.jpg" alt="">
+      <button id="autoClickerBuyBotton">Click me to by the AutoClicker: <span id ="autoClickerPriceDisplay">50</span></button>  
+    </center>
+
+    <script>
+        const clicksDisplay = document.getElementById("cookieDispaly");
+        const image = document.getElementById("image")
+        const autoClickerBuyBotton = document.getElementById("autoClickerBuyBotton")
+        const autoClickerPriceDisplay = document.getElementById("autoClickerPriceDisplay")
+        let clicks = 0;
+        function updateDisplay(){
+            clicksDisplay.textContent = clicks;
+        }
+
+        image.addEventListener("click",() => {
+            clicks++;
+            updateDisplay();
+        })
+        autoClickerBuyBotton.addEventListener("click", () => {
+              if(clicks >= autoClickerPriceDisplay.innerText){
+              window.setInterval(() => {
+             clicks++;
+             updateDisplay()
+        }, 1000)
+        clicks -= autoClickerPrice
+        autoClickerPrice *= 1.5
+    }
+    })
+
+        
+             
+             
+         
+        
+    </script>
+    
+</body>
+</html>
