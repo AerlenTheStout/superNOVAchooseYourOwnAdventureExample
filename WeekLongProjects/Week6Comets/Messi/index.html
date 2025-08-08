@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container {
+            position: relative;
+            text-align: center;
+            color: white;
+            background-image: url("messi.jpg");
+            background-size: cover;
+            background-position: center; /* <-- Changed from cover to center */
+            height: 100vh;
+        }
+
+        .bottom-left {
+            position: absolute;
+            bottom: 260px;
+            left: 10px;
+            color: black;
+            font-size: x-large;
+            text-align: left;
+        }
+
+        /* Flex container for the images */
+        .image-container {
+            display: flex; /* <-- Added: Flexbox for horizontal layout */
+            justify-content: center; /* <-- Added: Center the images horizontally */
+            gap: 20px; /* <-- Added: Space between the two images */
+            margin-top: 100px; /* <-- Added: Added space between text and images */
+            position: absolute;
+            bottom: 100px;
+            left: 10px;
+        }
+
+        .image-container a {
+            display: block;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .image-container a img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .image-container a:hover img {
+            transform: scale(1.2); /* Zoom in on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="bottom-left">Welcome to Infootball: Leo Messi edition</div>
+
+    <!-- Image container with flexbox, now below the text -->
+    <div class="image-container"> <!-- <-- Changed: Added this div to hold the images -->
+        <a href="Messistats.html">
+            <img src="stats.jpeg.jpg" alt="click here for stats">
+        </a>
+        <a href="Messihistory.html">
+            <img src="messihistory.jpeg" alt="click here for history of Messi">
+        </a>
+    </div>
+</div> <!-- Closing the container div -->
+
+</body>
+</html>

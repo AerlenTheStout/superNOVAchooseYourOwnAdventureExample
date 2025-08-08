@@ -1,0 +1,53 @@
+body {
+    background-color: rgb(59, 42, 42);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+button {
+    color: white;
+    background-color:    green;
+    border: 1px solid black;
+    left: auto;
+}
+button:disabled {
+    background-color: red;
+}
+img:hover {
+    transform: scale(1.1);
+}
+h1 {
+    color: white;
+}
+h2 {
+    color: white;
+}
+.colee {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 50px;
+    position: absolute;
+    top: 400px;
+}
+
+#box {
+    border: 1px solid rgb(0, 0, 0);
+    width: 400px;
+    height: 400px;
+    background-color: rgb(154, 79, 79);
+    position: absolute;
+    top: 30px;
+    right: 0px;
+
+}
+
+#autoclicker {
+    position: absolute;
+    top: 200px;
+    right: 1px;
+}
+#aaa {
+    position: absolute;
+    top: 100px;
+    right: 1px;
+}
+

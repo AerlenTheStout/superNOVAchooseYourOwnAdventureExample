@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dalhousie University</title>
+  <style>
+  /* Base styles */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav {
+    background-color: #003366;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #ffcc00;
+  }
+
+  header {
+    background-image: url('https://www.dal.ca/content/dam/dalhousie/images/homepage/2023/01/campus-quad-spring.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+  }
+
+  header p {
+    font-size: 1.5em;
+  }
+
+  section {
+    padding: 50px 20px;
+    max-width: 1000px;
+    margin: auto;
+  }
+
+  section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .about p {
+    font-size: 1.2em;
+    line-height: 1.6em;
+    text-align: justify;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .gallery-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .gallery-grid img:hover {
+    transform: scale(1.05);
+  }
+
+  .programs ul {
+    list-style-type: square;
+    font-size: 1.1em;
+    padding-left: 40px;
+    line-height: 1.6em;
+  }
+
+  .contact-form {
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+
+  .contact-form button {
+    background-color: #003366;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .contact-form button:hover {
+    background-color: #0055aa;
+  }
+
+  footer {
+    background-color: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* ✅ Responsive Mobile Styles */
+  @media (max-width: 768px) {
+    header {
+      padding: 60px 20px;
+    }
+
+    header h1 {
+      font-size: 2em;
+    }
+
+    header p {
+      font-size: 1.1em;
+    }
+
+    nav {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav a {
+      font-size: 1em;
+      padding: 10px 0;
+    }
+
+    .about p, .programs ul, .contact-form input, .contact-form textarea {
+      font-size: 1em;
+    }
+
+    section {
+      padding: 30px 15px;
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    header h1 {
+      font-size: 1.7em;
+    }
+
+    header p {
+      font-size: 1em;
+    }
+
+    nav a {
+      font-size: 0.95em;
+    }
+
+    .about p, .programs ul {
+      font-size: 0.95em;
+    }
+  }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: #003366;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffcc00;
+    }
+
+    header {
+      background-image: url('https://www.dal.ca/content/dam/dalhousie/images/homepage/2023/01/campus-quad-spring.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.5em;
+    }
+
+    section {
+      padding: 50px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .about p {
+      font-size: 1.2em;
+      line-height: 1.6em;
+      text-align: justify;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+    }
+
+    .programs ul {
+      list-style-type: square;
+      font-size: 1.1em;
+      padding-left: 40px;
+      line-height: 1.6em;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .contact-form input, .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .contact-form button {
+      background-color: #003366;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .contact-form button:hover {
+      background-color: #0055aa;
+    }
+
+    footer {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ✅ New Navigation -->
+<nav>
+  <a href="#about">About</a>
+  <a href="#programs">Programs</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<header>
+  <h1>Dalhousie University</h1>
+  <p>Inspiring Minds, Impacting the World</p>
+</header>
+
+<section id="about" class="about">
+  <h2>About Dalhousie</h2>
+  <p>
+    Dalhousie University, located in Halifax, Nova Scotia, is one of Canada's oldest and most prestigious universities. 
+    Founded in 1818, it offers a rich academic experience in an inclusive and welcoming environment. With world-class 
+    research, vibrant student life, and stunning Atlantic Canadian surroundings, Dalhousie continues to foster learning, 
+    innovation, and global impact.
+  </p>
+</section>
+
+<!-- ✅ New Programs Section -->
+<section id="programs" class="programs">
+  <h2>Programs Offered</h2>
+  <ul>
+    <li>Bachelor of Science in Computer Science</li>
+    <li>Bachelor of Engineering</li>
+    <li>Doctor of Medicine (MD)</li>
+    <li>Law (JD)</li>
+    <li>Master of Business Administration (MBA)</li>
+    <li>Marine Biology</li>
+    <li>Nursing and Health Sciences</li>
+  </ul>
+</section>
+
+<section id="gallery" class="gallery">
+  <h2>Campus Gallery</h2>
+  <div class="gallery-grid">
+    <img src="dal_campus_in_summer.jpg" alt="Campus in summer">
+    <img src="dal_graduation.jpg" alt="graduation">
+    <img src="1725878818564.jpg" alt="Killam Library">
+    <img src="https://www.dal.ca/content/dam/dalhousie/images/homepage/2021/10/fall-campus-students.jpg" alt="Fall on campus">
+    <img src="https://www.dal.ca/content/dam/dalhousie/images/faculty_pages/engineering/dalhousie_engineering_facility.jpg" alt="Engineering building">
+    <img src="https://www.dal.ca/content/dam/dalhousie/images/faculty_pages/health/2021/NursingStudentsInClassroom.jpg" alt="Nursing students">
+    <img src="https://www.dal.ca/content/dam/dalhousie/images/international/2021/international-students.jpg" alt="International Students">
+    <img src="https://www.dal.ca/content/dam/dalhousie/images/news/2021/04/spring-campus.jpg" alt="Spring on campus">
+  </div>
+</section>
+
+<!-- ✅ New Contact Form -->
+<section id="contact" class="contact">
+  <h2>Contact Us</h2>
+  <div class="contact-form">
+    <form action="#" method="POST">
+      <input type="text" name="name" placeholder="Your name" required>
+      <input type="email" name="email" placeholder="Your email" required>
+      <textarea name="message" rows="5" placeholder="Your message or question..." required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+</footer>
+
+</body>
+</html>

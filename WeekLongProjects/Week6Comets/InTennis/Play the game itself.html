@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Tennis Duel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom, #111, #222);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      background-color: #000;
+      border: 2px solid white;
+    }
+
+    #ui {
+      text-align: center;
+      margin: 10px;
+      font-size: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #startScreen, #gameOverScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 20px 30px;
+      border: 2px solid white;
+      border-radius: 10px;
+      z-index: 10;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 10px;
+    }
+
+    .touch-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background-color: #444;
+      color: white;
+      font-size: 30px;
+      border: none;
+      outline: none;
+      user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="700" height="500"></canvas>
+
+<div id="ui">
+  Player Score: <span id="playerScore">0</span> | AI Score: <span id="aiScore">0</span>
+</div>
+
+<div id="controls">
+  <button class="touch-btn" id="leftBtn">⯇</button>
+  <button class="touch-btn" id="rightBtn">⯈</button>
+</div>
+
+<div id="startScreen">
+  <h1>Mini Tennis Duel</h1>
+  <p>Control your paddle using arrow keys, A/D, or touch.</p>
+  <p>First to 5 wins!</p>
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<div id="gameOverScreen" class="hidden">
+  <h1 id="winnerText">Game Over</h1>
+  <button onclick="startGame()">Play Again</button>
+</div>
+
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const playerScoreEl = document.getElementById("playerScore");
+  const aiScoreEl = document.getElementById("aiScore");
+  const startScreen = document.getElementById("startScreen");
+  const gameOverScreen = document.getElementById("gameOverScreen");
+  const winnerText = document.getElementById("winnerText");
+
+  const leftBtn = document.getElementById("leftBtn");
+  const rightBtn = document.getElementById("rightBtn");
+
+  const player = {
+    width: 100,
+    height: 10,
+    x: canvas.width / 2 - 50,
+    y: canvas.height - 20,
+    dx: 0,
+    speed: 7
+  };
+
+  const ai = {
+    width: 100,
+    height: 10,
+    x: canvas.width / 2 - 50,
+    y: 10,
+    speed: 4
+  };
+
+  const ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 8,
+    dx: 4,
+    dy: 4,
+    speed: 4
+  };
+
+  let playerScore = 0;
+  let aiScore = 0;
+  let isRunning = false;
+  let leftPressed = false;
+  let rightPressed = false;
+
+  function drawPaddle(p) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+  }
+
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "#00ff99";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function movePlayer() {
+    if (leftPressed) player.dx = -player.speed;
+    else if (rightPressed) player.dx = player.speed;
+    else player.dx = 0;
+
+    player.x += player.dx;
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+  }
+
+  function moveAI() {
+    const center = ai.x + ai.width / 2;
+    if (center < ball.x - 10) ai.x += ai.speed;
+    else if (center > ball.x + 10) ai.x -= ai.speed;
+
+    if (ai.x < 0) ai.x = 0;
+    if (ai.x + ai.width > canvas.width) ai.x = canvas.width - ai.width;
+  }
+
+  function moveBall() {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+      ball.dx *= -1;
+    }
+
+    // Player paddle
+    if (
+      ball.y + ball.radius > player.y &&
+      ball.x > player.x &&
+      ball.x < player.x + player.width
+    ) {
+      const hit = (ball.x - (player.x + player.width / 2)) / (player.width / 2);
+      ball.dx = ball.speed * hit;
+      ball.dy *= -1;
+    }
+
+    // AI paddle
+    if (
+      ball.y - ball.radius < ai.y + ai.height &&
+      ball.x > ai.x &&
+      ball.x < ai.x + ai.width
+    ) {
+      const hit = (ball.x - (ai.x + ai.width / 2)) / (ai.width / 2);
+      ball.dx = ball.speed * hit;
+      ball.dy *= -1;
+    }
+
+    // Missed
+    if (ball.y - ball.radius > canvas.height) {
+      aiScore++;
+      updateScores();
+      resetRound();
+    }
+
+    if (ball.y + ball.radius < 0) {
+      playerScore++;
+      updateScores();
+      resetRound();
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPaddle(player);
+    drawPaddle(ai);
+    drawBall();
+  }
+
+  function updateScores() {
+    playerScoreEl.textContent = playerScore;
+    aiScoreEl.textContent = aiScore;
+    if (playerScore >= 5 || aiScore >= 5) endGame();
+  }
+
+  function resetRound() {
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+    ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
+    ball.dy = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
+    player.x = canvas.width / 2 - player.width / 2;
+    ai.x = canvas.width / 2 - ai.width / 2;
+  }
+
+  function update() {
+    if (!isRunning) return;
+    movePlayer();
+    moveAI();
+    moveBall();
+    draw();
+    requestAnimationFrame(update);
+  }
+
+  function startGame() {
+    playerScore = 0;
+    aiScore = 0;
+    updateScores();
+    resetRound();
+    isRunning = true;
+    startScreen.classList.add("hidden");
+    gameOverScreen.classList.add("hidden");
+    update();
+  }
+
+  function endGame() {
+    isRunning = false;
+    winnerText.textContent = playerScore > aiScore ? "You Win!" : "AI Wins!";
+    gameOverScreen.classList.remove("hidden");
+  }
+
+  // Keyboard controls
+  function keyDown(e) {
+    if (e.key === "ArrowRight" || e.key === "d") rightPressed = true;
+    else if (e.key === "ArrowLeft" || e.key === "a") leftPressed = true;
+  }
+
+  function keyUp(e) {
+    if (e.key === "ArrowRight" || e.key === "d") rightPressed = false;
+    else if (e.key === "ArrowLeft" || e.key === "a") leftPressed = false;
+  }
+
+  // Touch controls
+  leftBtn.addEventListener("touchstart", () => leftPressed = true);
+  leftBtn.addEventListener("touchend", () => leftPressed = false);
+
+  rightBtn.addEventListener("touchstart", () => rightPressed = true);
+  rightBtn.addEventListener("touchend", () => rightPressed = false);
+
+  // Listeners
+  document.addEventListener("keydown", keyDown);
+  document.addEventListener("keyup", keyUp);
+</script>
+</body>
+</html>

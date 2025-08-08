@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <audio id="mySound" src="dry-fart.mp3"></audio>
+    <center>
+      <h1>cookie click</h1>
+      <p>cookies clicked:<span id="cookiecount"></span></p>
+      <img src="https://www.freeiconspng.com/uploads/cookie-png-transparent-images-background-23.png" style="cursor: pointer;" width="150" onclick="addc()" />
+    </center>
+    <br>
+    <h2>shoop</h2>
+    <div id="box"></div>
+    
+    <div id="a">
+      <button  id="autoclicker" onclick="buyauto()" disabled>auto clicker (cookies 100)</button>
+    </div>
+
+    <div id="b">
+      <button id="aaa" onclick="buy()" disabled>clicker x (cookies 50)</button>
+    </div>  
+
+    <script>
+      // vars
+     let cookies = 0;
+     let abr = 1;
+     let speed = 100
+     let cookiecount = document.getElementById("cookiecount");
+     const but = document.getElementById("autoclicker");
+     const aaa = document.getElementById("aaa");
+      // functions
+     function addc() {
+        cookies += abr
+        update();
+        checkauto();
+        check();
+        playSound()
+     }
+      function playSound() {
+    const sound = document.getElementById("mySound");
+    sound.play();
+  }
+     function update() {
+        cookiecount.innerHTML = cookies;
+     }
+     function checkauto() {
+        if(cookies > 100) {
+          but.disabled = false;
+        }
+     } 
+
+     function buyauto() {
+        but.disabled = true;
+        cookies -= 100;
+        speed -= 10;
+        setInterval(() => {
+            addc();
+        }, speed);
+     }
+      function check() {
+        if(cookies > 50) {
+            aaa.disabled = false;
+        }
+      }
+      function buy() {
+        aaa.disabled = true;
+        cookies -= 50;
+        abr += 5;
+
+      }
+    </script>
+</body>
+</html>
+<!--hi im a coment-->

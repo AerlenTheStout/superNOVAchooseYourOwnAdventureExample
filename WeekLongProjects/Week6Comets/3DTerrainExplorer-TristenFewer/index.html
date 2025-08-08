@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Terrain Explorer - Tristen Fewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+        }
+        
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 14px;
+            line-height: 1.4;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .time-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            z-index: 100;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            transform: translate(-50%, -50%);
+            z-index: 150;
+            pointer-events: none;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .crosshair::before {
+            width: 2px;
+            height: 20px;
+            left: 9px;
+            top: 0;
+        }
+
+        .crosshair::after {
+            width: 20px;
+            height: 2px;
+            left: 0;
+            top: 9px;
+        }
+        
+        .health-bar {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 200px;
+            height: 25px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(to right, #ff4444, #44ff44);
+            transition: width 0.3s ease;
+            width: 100%;
+        }
+        
+        .health-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px black;
+        }
+        
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #9b38f1 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        
+        .menu-title {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .menu-subtitle {
+            font-size: 1.2em;
+            margin-bottom: 2em;
+            max-width: 6000px;
+            opacity: 0.9;
+            text-align: center;
+        }
+        
+        .menu-button {
+            background: linear-gradient(45deg, #bd44ff, #97e7ff);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(132, 107, 255, 0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 2em;
+            text-align: center;
+        }
+        
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(132, 107, 255, 0.4);
+        }
+        
+        .menu-instructions {
+            text-align: center;
+            max-width: 5000px;
+        }
+        
+        .menu-instructions * {
+            text-align: center !important;
+        }
+        
+        .menu-instructions h3 {
+            margin: 1em 0 0.5em 0;
+            color: #e600ff;
+            text-align: center;
+        }
+        
+        .menu-instructions p {
+            margin: 0.3em 0;
+            opacity: 0.8;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">Loading Terrain Explorer...</div>
+    
+    <div class="ui" id="ui" style="display: none;">
+        <div><strong>3D Terrain Explorer</strong></div>
+        <div style="margin-top: 10px;"><strong>Controls:</strong></div>
+        <div>W/A/S/D - Move around</div>
+        <div>Mouse - Look around</div>
+        <div>Space - Jump</div>
+        <div>Shift - Run faster</div>
+        <div style="margin-top: 10px; color: #aaa;">Click to enable mouse look</div>
+    </div>
+    
+    <div class="crosshair" id="crosshair" style="display: none;"></div>
+    
+    <div class="time-display" id="timeDisplay" style="display: none;">
+        Time: <span id="currentTime">12:00</span>
+    </div>
+    
+    <div class="health-bar" id="healthBar" style="display: none;">
+        <div class="health-fill" id="healthFill"></div>
+        <span class="health-text" id="healthText">100/100</span>
+    </div>
+    
+    <div class="menu" id="menu" style="display: block;">
+        <div class="menu-title">3D Terrain Explorer</div>
+        <div class="menu-subtitle">Explore a vast procedural landscape with lurking dangers</div>
+        <button class="menu-button" onclick="startGame()">Start Exploration</button>
+        <div class="menu-instructions">
+            <h3>Controls:</h3>
+            <p>WASD - Move around</p>
+            <p>Mouse - Look around</p>
+            <p>Space - Jump</p>
+            <p>Shift - Run faster</p>
+            <h3>Gameplay:</h3>
+            <p>• Explore the terrain and discover trees</p>
+            <p>• Listen for footstep sounds as you walk</p>
+            <p>• Beware of the creature that lurks in the shadows</p>
+            <p>• Monitor your health bar</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        class TerrainExplorer {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.terrain = null;
+                this.trees = [];
+
+                this.sun = null;
+                this.ambientLight = null;
+                
+                // Creature system
+                this.creature = {
+                    mesh: null,
+                    active: false,
+                    nextSpawnTime: 30000, // First spawn after 1 minute
+                    spawnInterval: 30000, // 1 minute again used to be 5 but thats too slow :<
+                    visibilityDuration: 30000, // Visible for 10 seconds
+                    damage: 20,
+                    attackRange: 15,
+                    lastAttackTime: 0,
+                    attackCooldown: 2000
+                };
+                
+                // Game start time for creature timing
+                this.gameStartTime = Date.now();
+                
+                // Game time system (synchronized with real time)
+                const now = new Date();
+                this.gameTime = now.getHours() + now.getMinutes() / 60; // Start at current local time (Had to look up)
+                this.dayDuration = 86400; // Real-time 24-hour cycle that doesn't work :(
+                this.timeSpeed = 24 / this.dayDuration; // Real-time speed kinda
+                
+                // Player properties
+                this.player = {
+                    position: new THREE.Vector3(0, 30, 0), // Start higher
+                    velocity: new THREE.Vector3(0, 0, 0),
+                    speed: 8, // Normal walking speed
+                    runSpeed: 15, // Running speed
+                    jumpPower: 12,
+                    onGround: false,
+                    health: 100,
+                    maxHealth: 100,
+                    lastFootstepTime: 0,
+                    footstepInterval: 500 // milliseconds between footsteps
+                };
+                
+                // Control system
+                this.keys = {};
+                this.mouse = { x: 0, y: 0 };
+                this.isPointerLocked = false;
+                
+                // Terrain generation settings
+                this.terrainSize = 256;
+                this.terrainScale = 3;
+                this.heightScale = 40;
+                this.terrainData = [];
+                
+                // Physics
+                this.gravity = -45;
+                this.groundLevel = 0;
+                
+                // Performance tracking
+                this.lastTime = 0;
+                this.frameCount = 0;
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('Initializing Terrain Explorer...');
+                
+                this.createScene();
+                this.generateTerrain();
+                this.generateTrees();
+                this.createCreature();
+                this.setupLighting();
+                this.initSounds();
+                this.setupControls();
+                this.setupPointerLock();
+                
+                // Position player on terrain cuz for some reason it wouldn't before
+                this.positionPlayerOnTerrain();
+                
+                this.animate();
+                
+                // Show UI elements after initialization tee hee
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('ui').style.display = 'block';
+                    document.getElementById('crosshair').style.display = 'block';
+                    document.getElementById('timeDisplay').style.display = 'block';
+                    document.getElementById('healthBar').style.display = 'block';
+                    console.log('Terrain Explorer ready!');
+                }, 500);
+            }
+            
+            createScene() {
+                // Initialize Three.js scene
+                this.scene = new THREE.Scene();
+                this.scene.fog = new THREE.Fog(0x87CEEB, 50, 400);
+                
+                // Setup camera
+                this.camera = new THREE.PerspectiveCamera(
+                    75, 
+                    window.innerWidth / window.innerHeight, 
+                    0.1, 
+                    1000
+                );
+                this.camera.position.copy(this.player.position);
+                
+                // Setup renderer (I hate 3D stuff in HTML)
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.setClearColor(0x87CEEB);
+                document.body.appendChild(this.renderer.domElement);
+                
+                // Handle window resize (Somtimes works)
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+            
+            // Procedural noise function for terrain generation
+            noise(x, y) {
+                // Multi-octave noise for more realistic terrain math stuff yay
+                const octave1 = Math.sin(x * 0.008) * Math.cos(y * 0.008);
+                const octave2 = Math.sin(x * 0.016) * Math.cos(y * 0.016) * 0.5;
+                const octave3 = Math.sin(x * 0.032) * Math.cos(y * 0.032) * 0.25;
+                const octave4 = Math.sin(x * 0.004) * Math.cos(y * 0.004) * 2;
+                
+                return (octave1 + octave2 + octave3 + octave4) * 0.3;
+            }
+            
+            generateTerrain() {
+                console.log('Generating terrain...');
+                
+                const geometry = new THREE.PlaneGeometry(
+                    this.terrainSize * this.terrainScale,
+                    this.terrainSize * this.terrainScale,
+                    this.terrainSize - 1,
+                    this.terrainSize - 1
+                );
+                
+                // Generate height data and apply to geometry vertices simultaneously which i'm surprised this can handle
+                const vertices = geometry.attributes.position.array;
+                this.terrainData = [];
+                
+                // Initialize terrain data array
+                for (let i = 0; i < this.terrainSize; i++) {
+                    this.terrainData[i] = [];
+                }
+                
+                // Generate heights and apply to both data and geometry stuffs
+                for (let i = 0; i < this.terrainSize; i++) {
+                    for (let j = 0; j < this.terrainSize; j++) {
+                        const height = this.noise(i * 4, j * 4) * this.heightScale;
+                        this.terrainData[i][j] = height;
+                        
+                        // Apply to geometry vertex (PlaneGeometry is laid out differently cuz f you)
+                        const vertexIndex = (j * this.terrainSize + i) * 3;
+                        if (vertexIndex + 2 < vertices.length) {
+                            vertices[vertexIndex + 2] = height; // Z is up in PlaneGeometry
+                        }
+                    }
+                }
+                
+                geometry.attributes.position.needsUpdate = true;
+                geometry.computeVertexNormals();
+                
+                // Create terrain material with grass color, which somtimes turned out white idk why
+                const material = new THREE.MeshLambertMaterial({ 
+                    color: 0x4a7c59,
+                    side: THREE.DoubleSide
+                });
+                
+                this.terrain = new THREE.Mesh(geometry, material);
+                this.terrain.rotation.x = -Math.PI / 2; // Rotate to be horizontal
+                this.terrain.receiveShadow = true;
+                this.scene.add(this.terrain);
+                
+                console.log(`Terrain created: ${this.terrainSize}x${this.terrainSize} grid`);
+            }
+            
+
+            
+            generateTrees() {
+                console.log('Generating forest...');
+                
+                const treeCount = 300;
+                const maxDistance = (this.terrainSize * this.terrainScale) * 0.45;
+                
+                // Seeded random for consistent tree placement (a little werid somtimes)
+                let seed = 42;
+                const seededRandom = () => {
+                    seed = (seed * 9301 + 49297) % 233280;
+                    return seed / 233280;
+                };
+                
+                for (let i = 0; i < treeCount; i++) {
+                    const x = (seededRandom() - 0.5) * maxDistance * 2;
+                    const z = (seededRandom() - 0.5) * maxDistance * 2;
+                    const scale = 0.7 + seededRandom() * 0.8;
+                    const treeType = Math.floor(seededRandom() * 3);
+                    
+                    this.createTree(x, z, scale, treeType);
+                }
+                
+                console.log(`Generated ${this.trees.length} trees`);
+            }
+            
+            createCreature() {
+                // Create a menacing dark creature (It's literally a square cuz I couldn't upload my model)
+                const geometry = new THREE.BoxGeometry(4, 8, 4);
+                const material = new THREE.MeshPhongMaterial({ 
+                    color: 0x1a1a1a,
+                    emissive: 0x330000,
+                    shininess: 0
+                });
+                
+                this.creature.mesh = new THREE.Mesh(geometry, material);
+                this.creature.mesh.castShadow = true;
+                this.creature.mesh.visible = false; // Start hidden
+                this.scene.add(this.creature.mesh);
+                
+                console.log('Creature created');
+            }
+            
+            initSounds() {
+                console.log('Initializing sound system...');
+                // Simple sound effects using Web Audio API oscillator which I learned about recently
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('Sound system ready');
+            }
+            
+            playFootstepSound() {
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.value = 80 + Math.random() * 40;
+                oscillator.type = 'sawtooth';
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.1);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 0.1);
+            }
+            
+            playCreatureGrowl() {
+                if (!this.audioContext) return;
+                
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+                
+                oscillator.frequency.value = 40;
+                oscillator.type = 'sawtooth';
+                
+                gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 1.5);
+                
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + 1.5);
+            }
+            
+            updateHealthBar() {
+                const healthPercent = (this.player.health / this.player.maxHealth) * 100;
+                const healthFill = document.getElementById('healthFill');
+                const healthText = document.getElementById('healthText');
+                
+                if (healthFill && healthText) {
+                    healthFill.style.width = `${healthPercent}%`;
+                    healthText.textContent = `${this.player.health}/${this.player.maxHealth}`;
+                    
+                    // Change color based on health, I like colors
+                    if (healthPercent > 60) {
+                        healthFill.style.background = 'linear-gradient(to right, #44ff44, #88ff88)';
+                    } else if (healthPercent > 30) {
+                        healthFill.style.background = 'linear-gradient(to right, #ffff44, #44ff44)';
+                    } else {
+                        healthFill.style.background = 'linear-gradient(to right, #ff4444, #ffff44)';
+                    }
+                }
+            }
+            
+            createTree(x, z, scale = 1, type = 0) {
+                const treeGroup = new THREE.Group();
+                
+                // Tree trunk
+                const trunkHeight = 3 + scale * 2;
+                const trunkRadius = 0.15 + scale * 0.1;
+                const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius * 1.2, trunkHeight, 8);
+                const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.y = trunkHeight / 2;
+                trunk.castShadow = true;
+                treeGroup.add(trunk);
+                
+                // Tree foliage (different types)
+                let foliage;
+                const foliageColors = [0x2d5016, 0x3d6026, 0x1d4006];
+                
+                if (type === 0) {
+                    // Spherical tree
+                    foliage = new THREE.Mesh(
+                        new THREE.SphereGeometry(1.5 * scale, 8, 6),
+                        new THREE.MeshLambertMaterial({ color: foliageColors[0] })
+                    );
+                } else if (type === 1) {
+                    // Conical tree
+                    foliage = new THREE.Mesh(
+                        new THREE.ConeGeometry(1.2 * scale, 3 * scale, 8),
+                        new THREE.MeshLambertMaterial({ color: foliageColors[1] })
+                    );
+                } else {
+                    // Irregular tree
+                    foliage = new THREE.Mesh(
+                        new THREE.DodecahedronGeometry(1.3 * scale),
+                        new THREE.MeshLambertMaterial({ color: foliageColors[2] })
+                    );
+                }
+                
+                foliage.position.y = trunkHeight + (type === 1 ? 1.5 * scale : 1 * scale);
+                foliage.castShadow = true;
+                foliage.receiveShadow = true;
+                treeGroup.add(foliage);
+                
+                // Position tree on terrain surface properly (this used to not work so i had to fix it)
+                const terrainHeight = this.getTerrainHeight(x, z);
+                treeGroup.position.set(x, terrainHeight, z);
+                
+                this.trees.push(treeGroup);
+                this.scene.add(treeGroup);
+            }
+            
+            getTerrainHeight(x, z) {
+                // Convert world coordinates to terrain grid coordinates (matching the visual terrain exactly, btw thsi too forever to figure out)
+                const halfSize = (this.terrainSize * this.terrainScale) / 2;
+                const normalizedX = (x + halfSize) / this.terrainScale;
+                const normalizedZ = (z + halfSize) / this.terrainScale;
+                
+                const gridX = Math.floor(normalizedX);
+                const gridZ = Math.floor(normalizedZ);
+                
+                // Boundary check (Cuz you'll fall if you don't)
+                if (gridX < 0 || gridX >= this.terrainSize - 1 || gridZ < 0 || gridZ >= this.terrainSize - 1) {
+                    return 0;
+                }
+                
+                // Bilinear interpolation for smooth height values
+                const fx = normalizedX - gridX;
+                const fz = normalizedZ - gridZ;
+                
+                // Get the four corner heights
+                const h00 = this.terrainData[gridX][gridZ] || 0;
+                const h10 = this.terrainData[gridX + 1][gridZ] || 0;
+                const h01 = this.terrainData[gridX][gridZ + 1] || 0;
+                const h11 = this.terrainData[gridX + 1][gridZ + 1] || 0;
+                
+                // Interpolate along X axis
+                const h0 = h00 * (1 - fx) + h10 * fx;
+                const h1 = h01 * (1 - fx) + h11 * fx;
+                
+                // Interpolate along Z axis
+                return h0 * (1 - fz) + h1 * fz;
+            }
+            
+            positionPlayerOnTerrain() {
+                const terrainHeight = this.getTerrainHeight(this.player.position.x, this.player.position.z);
+                this.player.position.y = terrainHeight + 2; // Place player exactly on visual terrain
+                this.camera.position.copy(this.player.position);
+                console.log(`Player positioned at height: ${this.player.position.y}, terrain height: ${terrainHeight}`);
+            }
+            
+            setupLighting() {
+                // Ambient lighting
+                this.ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+                this.scene.add(this.ambientLight);
+                
+                // Directional light (sun)
+                this.sun = new THREE.DirectionalLight(0xffffff, 1.2);
+                this.sun.position.set(100, 100, 100);
+                this.sun.castShadow = true;
+                
+                // Enhanced shadow settings for better quality (It used to look shitty)
+                this.sun.shadow.mapSize.width = 4096;
+                this.sun.shadow.mapSize.height = 4096;
+                this.sun.shadow.camera.near = 0.5;
+                this.sun.shadow.camera.far = 800;
+                this.sun.shadow.camera.left = -300;
+                this.sun.shadow.camera.right = 300;
+                this.sun.shadow.camera.top = 300;
+                this.sun.shadow.camera.bottom = -300;
+                this.sun.shadow.bias = -0.0001;
+                
+                this.scene.add(this.sun);
+            }
+            
+            setupControls() {
+                // Clear any existing keys to prevent stuck keys (I hated having to do this)
+                this.keys = {};
+                
+                // Keyboard event listeners with stuck key prevention
+                const keyDownHandler = (event) => {
+                    // Prevent browser default behavior
+                    if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space', 'ShiftLeft', 'ShiftRight'].includes(event.code)) {
+                        event.preventDefault();
+                    }
+                    
+                    this.keys[event.code] = true;
+                    if (event.code === 'KeyW' || event.code === 'KeyA' || event.code === 'KeyS' || event.code === 'KeyD') {
+                        console.log('Movement key pressed:', event.code);
+                    }
+                };
+                
+                const keyUpHandler = (event) => {
+                    this.keys[event.code] = false;
+                };
+                
+                // Clear keys when window loses focus to prevent stuck keys (Very finicky)
+                const focusHandler = () => {
+                    this.keys = {};
+                    console.log('Window focus lost - clearing all keys');
+                };
+                
+                document.addEventListener('keydown', keyDownHandler);
+                document.addEventListener('keyup', keyUpHandler);
+                window.addEventListener('blur', focusHandler);
+                document.addEventListener('visibilitychange', focusHandler);
+                
+                // Mouse movement for camera look
+                document.addEventListener('mousemove', (event) => {
+                    if (this.isPointerLocked) {
+                        this.mouse.x -= event.movementX * 0.002; // Fixed horizontal inversion
+                        this.mouse.y -= event.movementY * 0.002; // Fixed vertical inversion
+                        this.mouse.y = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, this.mouse.y));
+                    }
+                });
+            }
+            
+            setupPointerLock() {
+                const canvas = this.renderer.domElement;
+                
+                canvas.addEventListener('click', () => {
+                    canvas.requestPointerLock();
+                });
+                
+                document.addEventListener('pointerlockchange', () => {
+                    this.isPointerLocked = document.pointerLockElement === canvas;
+                    document.getElementById('crosshair').style.display = this.isPointerLocked ? 'block' : 'none';
+                    console.log('Pointer lock:', this.isPointerLocked ? 'enabled' : 'disabled');
+                });
+            }
+            
+            updateDaylight(deltaTime) {
+                // Update game time
+                this.gameTime += this.timeSpeed * deltaTime;
+                if (this.gameTime >= 24) {
+                    this.gameTime -= 24;
+                }
+                
+                // Calculate sun position and lighting based on time (Still doesn't work, not a smooth animation)
+                const timeAngle = (this.gameTime / 24) * Math.PI * 2 - Math.PI;
+                const sunHeight = Math.sin(timeAngle) * 120;
+                const sunDistance = Math.cos(timeAngle) * 120;
+                
+                this.sun.position.set(sunDistance, Math.max(sunHeight, 10), 80);
+                
+                // Smooth color and intensity transitions
+                let sunIntensity, ambientIntensity;
+                let sunHue, sunSat, sunLight;
+                let fogHue, fogSat, fogLight;
+                let skyHue, skySat, skyLight;
+                
+                // Create smooth transitions based on time of day
+                if (this.gameTime >= 4 && this.gameTime <= 8) {
+                    // Sunrise transition (4AM - 8AM)
+                    const progress = (this.gameTime - 4) / 4;
+                    sunIntensity = 0.1 + progress * 0.9;
+                    ambientIntensity = 0.15 + progress * 0.35;
+                    
+                    sunHue = 0.1 - progress * 0.05; // Orange to yellow
+                    sunSat = 0.8 - progress * 0.6; // Saturated to less saturated
+                    sunLight = 0.6 + progress * 0.4; // Dim to bright
+                    
+                    fogHue = 0.55 + (1 - progress) * 0.1; // Blue to slightly orange
+                    fogSat = 0.3 - progress * 0.1;
+                    fogLight = 0.4 + progress * 0.45;
+                    
+                    skyHue = 0.55 + (1 - progress) * 0.1;
+                    skySat = 0.6 - progress * 0.1;
+                    skyLight = 0.5 + progress * 0.45;
+                    
+                } else if (this.gameTime > 8 && this.gameTime < 16) {
+                    // Midday (8AM - 4PM)
+                    sunIntensity = 1.0;
+                    ambientIntensity = 0.5;
+                    
+                    sunHue = 0.15; // Yellow-white
+                    sunSat = 0.2;
+                    sunLight = 1.0;
+                    
+                    fogHue = 0.55; // Sky blue
+                    fogSat = 0.2;
+                    fogLight = 0.85;
+                    
+                    skyHue = 0.55;
+                    skySat = 0.5;
+                    skyLight = 0.95;
+                    
+                } else if (this.gameTime >= 16 && this.gameTime <= 20) {
+                    // Sunset transition (4PM - 8PM)
+                    const progress = (this.gameTime - 16) / 4;
+                    sunIntensity = 1.0 - progress * 0.9;
+                    ambientIntensity = 0.5 - progress * 0.35;
+                    
+                    sunHue = 0.15 - progress * 0.1; // Yellow to orange
+                    sunSat = 0.2 + progress * 0.6; // Less to more saturated
+                    sunLight = 1.0 - progress * 0.4; // Bright to dim
+                    
+                    fogHue = 0.55 - progress * 0.1; // Blue to orange
+                    fogSat = 0.2 + progress * 0.1;
+                    fogLight = 0.85 - progress * 0.45;
+                    
+                    skyHue = 0.55 - progress * 0.1;
+                    skySat = 0.5 + progress * 0.1;
+                    skyLight = 0.95 - progress * 0.45;
+                    
+                } else {
+                    // Nighttime (8PM - 4AM)
+                    sunIntensity = 0.1;
+                    ambientIntensity = 0.15;
+                    
+                    sunHue = 0.6; // Blue moonlight
+                    sunSat = 0.8;
+                    sunLight = 0.3;
+                    
+                    fogHue = 0.65; // Dark blue
+                    fogSat = 0.9;
+                    fogLight = 0.1;
+                    
+                    skyHue = 0.65;
+                    skySat = 0.9;
+                    skyLight = 0.05;
+                }
+                
+                // Apply smooth lighting changes
+                this.sun.intensity = sunIntensity;
+                this.sun.color.setHSL(sunHue, sunSat, sunLight);
+                this.ambientLight.intensity = ambientIntensity;
+                
+                this.scene.fog.color.setHSL(fogHue, fogSat, fogLight);
+                this.renderer.setClearColor(new THREE.Color().setHSL(skyHue, skySat, skyLight));
+                
+                // Update time display
+                const hours = Math.floor(this.gameTime);
+                const minutes = Math.floor((this.gameTime - hours) * 60);
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            updateCreature() {
+                const currentTime = Date.now() - this.gameStartTime;
+                
+                // Check if it's time for the creature to appear
+                if (!this.creature.active && currentTime >= this.creature.nextSpawnTime) {
+                    this.spawnCreature();
+                } else if (this.creature.active) {
+                    // Check if creature should disappear
+                    if (currentTime >= this.creature.nextSpawnTime + this.creature.visibilityDuration) {
+                        this.despawnCreature();
+                    } else {
+                        // Update creature behavior while active
+                        this.updateCreatureBehavior();
+                    }
+                }
+            }
+            
+            spawnCreature() {
+                console.log('Creature spawns!');
+                
+                // Position creature near player but at a distance
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 30;
+                
+                const spawnX = this.player.position.x + Math.cos(angle) * distance;
+                const spawnZ = this.player.position.z + Math.sin(angle) * distance;
+                const terrainHeight = this.getTerrainHeight(spawnX, spawnZ);
+                
+                this.creature.mesh.position.set(spawnX, terrainHeight + 4, spawnZ);
+                this.creature.mesh.visible = true;
+                this.creature.active = true;
+                
+                // Play spawn sound
+                this.playCreatureGrowl();
+            }
+            
+            despawnCreature() {
+                console.log('Creature disappears...');
+                
+                this.creature.mesh.visible = false;
+                this.creature.active = false;
+                
+                // Schedule next spawn (5 minutes later)
+                this.creature.nextSpawnTime = Date.now() - this.gameStartTime + this.creature.spawnInterval;
+            }
+            
+            updateCreatureBehavior() {
+                if (!this.creature.active) return;
+                
+                // Make creature slowly move toward player
+                const creaturePos = this.creature.mesh.position;
+                const playerPos = this.player.position;
+                
+                const direction = new THREE.Vector3()
+                    .subVectors(playerPos, creaturePos)
+                    .normalize();
+                
+                // Move creature slowly toward player
+                creaturePos.x += direction.x * 5 * 0.016; // Slow movement
+                creaturePos.z += direction.z * 5 * 0.016;
+                
+                // Keep creature on terrain
+                const terrainHeight = this.getTerrainHeight(creaturePos.x, creaturePos.z);
+                creaturePos.y = terrainHeight + 4;
+                
+                // Check if creature can attack player
+                const distance = creaturePos.distanceTo(playerPos);
+                if (distance < this.creature.attackRange) {
+                    const now = Date.now();
+                    if (now - this.creature.lastAttackTime > this.creature.attackCooldown) {
+                        this.creatureAttackPlayer();
+                        this.creature.lastAttackTime = now;
+                    }
+                }
+            }
+            
+            creatureAttackPlayer() {
+                console.log('Creature attacks!');
+                
+                // Damage player
+                this.player.health = Math.max(0, this.player.health - this.creature.damage);
+                
+                // Play attack sound
+                this.playCreatureGrowl();
+                
+                // Check if player died
+                if (this.player.health <= 0) {
+                    console.log('You have been defeated!');
+                    // Could restart game or show game over screen
+                    this.player.health = this.player.maxHealth; // Respawn for now
+                }
+            }
+            
+            updatePlayer(deltaTime) {
+                // Determine movement speed
+                const isRunning = this.keys['ShiftLeft'] || this.keys['ShiftRight'];
+                const currentSpeed = isRunning ? this.player.runSpeed : this.player.speed;
+                
+                // Calculate movement direction based on camera orientation
+                const forward = new THREE.Vector3(0, 0, -1);
+                const right = new THREE.Vector3(1, 0, 0);
+                
+                forward.applyQuaternion(this.camera.quaternion);
+                right.applyQuaternion(this.camera.quaternion);
+                
+                // Project movement vectors onto horizontal plane
+                forward.y = 0;
+                right.y = 0;
+                forward.normalize();
+                right.normalize();
+                
+                // Process movement input
+                const movement = new THREE.Vector3(0, 0, 0);
+                
+                if (this.keys['KeyW']) {
+                    movement.add(forward);
+                }
+                if (this.keys['KeyS']) {
+                    movement.sub(forward);
+                }
+                if (this.keys['KeyA']) {
+                    movement.sub(right);
+                }
+                if (this.keys['KeyD']) {
+                    movement.add(right);
+                }
+                
+                // Normalize diagonal movement
+                if (movement.length() > 0) {
+                    movement.normalize();
+                    movement.multiplyScalar(currentSpeed * deltaTime);
+                    
+                    // Play footstep sounds when moving
+                    if (this.player.onGround) {
+                        const now = performance.now();
+                        if (now - this.player.lastFootstepTime > this.player.footstepInterval) {
+                            this.playFootstepSound();
+                            this.player.lastFootstepTime = now;
+                        }
+                    }
+                }
+                
+                // Apply horizontal movement directly to position
+                this.player.position.x += movement.x;
+                this.player.position.z += movement.z;
+                
+                // Handle jumping
+                if (this.keys['Space'] && this.player.onGround) {
+                    this.player.velocity.y = this.player.jumpPower;
+                    this.player.onGround = false;
+                    console.log('Jump!');
+                }
+                
+                // Apply gravity
+                if (!this.player.onGround) {
+                    this.player.velocity.y += this.gravity * deltaTime;
+                }
+                
+                // Update vertical position
+                this.player.position.y += this.player.velocity.y * deltaTime;
+                
+                // Terrain collision detection - match visual terrain exactly
+                const terrainHeight = this.getTerrainHeight(this.player.position.x, this.player.position.z);
+                const playerGroundLevel = terrainHeight + 1.8; // Player height offset
+                
+                // Smooth ground following
+                if (this.player.position.y <= playerGroundLevel + 0.1) {
+                    this.player.position.y = playerGroundLevel;
+                    this.player.velocity.y = 0;
+                    this.player.onGround = true;
+                } else {
+                    this.player.onGround = false;
+                }
+                
+                // Boundary limits (keep player within terrain bounds)
+                const maxBound = (this.terrainSize * this.terrainScale) / 2 - 10;
+                this.player.position.x = Math.max(-maxBound, Math.min(maxBound, this.player.position.x));
+                this.player.position.z = Math.max(-maxBound, Math.min(maxBound, this.player.position.z));
+            }
+            
+            updateCamera() {
+                // Update camera position to follow player
+                this.camera.position.copy(this.player.position);
+                
+                // Apply mouse look rotation
+                this.camera.rotation.order = 'YXZ';
+                this.camera.rotation.y = this.mouse.x;
+                this.camera.rotation.x = this.mouse.y;
+            }
+            
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                const currentTime = performance.now() * 0.001;
+                const deltaTime = Math.min(currentTime - this.lastTime, 0.1); // Cap delta time
+                this.lastTime = currentTime;
+                
+                if (deltaTime > 0) {
+                    this.updateDaylight(deltaTime);
+                    this.updatePlayer(deltaTime);
+                    this.updateCamera();
+                    this.updateCreature();
+                    this.updateHealthBar();
+                }
+                
+                this.renderer.render(this.scene, this.camera);
+                
+                // Performance tracking
+                this.frameCount++;
+                if (this.frameCount % 60 === 0) {
+                    console.log(`Frame ${this.frameCount}, Time: ${this.gameTime.toFixed(1)}h, Player pos: (${this.player.position.x.toFixed(1)}, ${this.player.position.y.toFixed(1)}, ${this.player.position.z.toFixed(1)})`);
+                }
+            }
+        }
+        
+        // Global game instance
+        let gameInstance = null;
+        
+        // Start game function called from menu
+        function startGame() {
+            document.getElementById('menu').style.display = 'none';
+            console.log('Starting Terrain Explorer...');
+            gameInstance = new TerrainExplorer();
+        }
+        
+        // Initialize when page loads but don't start automatically
+        window.addEventListener('load', () => {
+            console.log('Page loaded - showing menu');
+        });
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('Page hidden - pausing');
+            } else {
+                console.log('Page visible - resuming');
+            }
+        });
+    </script>
+</body>
+</html>

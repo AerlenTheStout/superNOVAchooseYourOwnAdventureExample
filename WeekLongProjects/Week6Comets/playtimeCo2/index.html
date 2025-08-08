@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playtime Co. - Official Site</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #101820;
+      color: #f2aa4c;
+      padding: 20px;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #1b1b1b;
+      padding: 10px 0;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: #f2aa4c;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    section {
+      margin: 40px 0;
+    }
+
+    h2 {
+      color: #101820;
+      margin-bottom: 10px;
+    }
+
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .photos-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .ads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .ad {
+      background-color: #f2aa4c;
+      color: #101820;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      flex: 1 1 280px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .contact-form button {
+      padding: 10px;
+      background-color: #101820;
+      color: #f2aa4c;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .contact-form button:hover {
+      background-color: #333;
+    }
+
+    footer {
+      background-color: #101820;
+      color: #f2aa4c;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Playtime Co.</h1>
+    <p>"Where Imagination Comes to Life!"</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#factory">The Factory</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+
+    <section id="home">
+      <h2>Welcome to Playtime Co.</h2>
+      <p>
+        Founded in the 1960s, Playtime Co. was once the king of the toy industry. Our innovative designs and love for children made us a household name. While the factory has remained quiet for years, our legacy continues to inspire generations of toy lovers.
+      </p>
+      <div class="ads">
+        <div class="ad">
+          <h3>🎁 Huggy Wuggy Plush</h3>
+          <p>Now Available in Limited Quantities!</p>
+        </div>
+        <div class="ad">
+          <h3>🎉 Employee of the Month</h3>
+          <p>Congratulations to... <em>Luke Armstrong!</em></p>
+        </div>
+        <div class="ad">
+          <h3>🧸 Adopt-a-Toy Program</h3>
+          <p>Help us bring life back to Playtime Co.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="factory">
+      <h2>The Factory</h2>
+      <p>
+        playtime co. is currently the king of the toy industry, with a factory that produces some of the most beloved toys in the world. Our state-of-the-art facility is equipped with cutting-edge technology and staffed by dedicated employees who are passionate about creating joy for children everywhere.
+      </p>
+      <p><strong>Location:</strong> Somewhere in the heart of New Jersey. open to the public.</p>
+    </section>
+
+    <section id="photos">
+      <h2>Inside the Factory</h2>
+      <div class="photos-grid">
+        <img src="https://preview.redd.it/how-big-is-playtime-co-really-v0-os2h6a1qu9he1.jpeg?width=640&crop=smart&auto=webp&s=4940a0a286bc8dd0b3d96e896c0f3f2ebf113b01" alt="Playtime Co. Building">
+        <img src="https://cdna.artstation.com/p/assets/images/images/058/899/152/large/nick-heltne-highresscreenshot00001.jpg?1675200111" alt="production line">
+        <img src="https://i.ytimg.com/vi/zT9Cckup9Iw/mqdefault.jpg" alt="Security Room">
+        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/179fbec3-bdbe-453c-9938-11d2df0f5639/dhfp53k-f9584e46-a822-4cb3-95f2-e10032f02752.jpg/v1/fill/w_1280,h_533,q_75,strp/playcare__poppy_playtime__by_99f5_dhfp53k-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTMzIiwicGF0aCI6IlwvZlwvMTc5ZmJlYzMtYmRiZS00NTNjLTk5MzgtMTFkMmRmMGY1NjM5XC9kaGZwNTNrLWY5NTg0ZTQ2LWE4MjItNGNiMy05NWYyLWUxMDAzMmYwMjc1Mi5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.AXwx1QCJlX97TSGchVDu4KWk4rexXN6xo1eCvE5itF4" alt="Playcare">
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>Contact Playtime Co.</h2>
+      <form class="contact-form">
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea rows="4" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Playtime Co. All rights reserved. | This site is for archival and promotional purposes only.</p>
+  </footer>
+
+  <script>
+    // Just a fun little fake feature
+    document.querySelector('.contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert("Thank you for reaching out to Playtime Co. Your message has been... archived.");
+    });
+  </script>
+</body>
+</html>
+

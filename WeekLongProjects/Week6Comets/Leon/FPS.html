@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ball FPS Stress Test ×50</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    #ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      color: black;
+      padding: 10px;
+      border-radius: 6px;
+      z-index: 10;
+    }
+    #pauseBtn {
+      margin-top: 5px;
+      padding: 5px 10px;
+      border: none;
+      background: #ddd;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <div id="stats">FPS: 0 | Balls: 1</div>
+    <button id="pauseBtn">Pause</button>
+  </div>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const stats = document.getElementById("stats");
+    const pauseBtn = document.getElementById("pauseBtn");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    class Ball {
+      constructor(x, y, vx, vy, radius = 1.6) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.radius = radius;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+          this.vx *= -1;
+        }
+        if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) {
+          this.vy *= -1;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+      }
+    }
+
+    let balls = [new Ball(canvas.width / 2, canvas.height / 2, 2, 2)];
+    let paused = false;
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Resume" : "Pause";
+    });
+
+    let lastTime = performance.now();
+
+    function animate(time) {
+      const delta = time - lastTime;
+      const fps = Math.round(1000 / delta);
+      lastTime = time;
+
+      if (!paused) {
+        ctx.fillStyle = "rgba(17, 17, 17, 0.3)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        balls.forEach((ball) => {
+          ball.update();
+          ball.draw();
+        });
+
+        stats.textContent = `FPS: ${fps} | Balls: ${balls.length}`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Multiply balls by 50 every 5 seconds (each ball creates 49 new ones)
+    setInterval(() => {
+      if (!paused) {
+        const newBalls = [];
+        for (let ball of balls) {
+          for (let i = 0; i < 49; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 2;
+            newBalls.push(
+              new Ball(
+                ball.x,
+                ball.y,
+                Math.cos(angle) * speed,
+                Math.sin(angle) * speed,
+                ball.radius
+              )
+            );
+          }
+        }
+        balls.push(...newBalls);
+      }
+    }, 5000);
+
+    animate(performance.now());
+  </script>
+</body>
+</html>

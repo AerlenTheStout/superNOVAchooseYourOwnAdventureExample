@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>quests</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+  body {
+    margin: 0;
+    padding: 30px;
+    background: #0b0c10;
+    color: #e0eaff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none;
+  }
+
+  h1 {
+    font-size: 3rem;
+    letter-spacing: 0.2em;
+    color: #00ffff;
+    text-shadow:
+      0 0 5px #00ffff,
+      0 0 15px #00ffff,
+      0 0 30px #00ffff;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+
+  #tabs {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 20px;
+  }
+
+  .tab-button {
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    border-radius: 30px;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .tab-button.active,
+  .tab-button:hover {
+    background-color: #00ffff22;
+    box-shadow:
+      0 0 12px #00ffff,
+      0 0 20px #00ffff;
+  }
+
+  #quest-container, #shop-container {
+    background: #121821;
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    width: 460px;
+    max-width: 95vw;
+    padding: 25px 30px;
+    box-shadow:
+      0 0 20px #00ffff,
+      inset 0 0 15px #005f5f;
+    min-height: 300px;
+  }
+
+  .quest-item {
+    background: #1a2028;
+    border-left: 5px solid #00ffff;
+    margin: 14px 0;
+    padding: 14px 18px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow:
+      0 0 10px rgba(0, 255, 255, 0.2);
+  }
+
+  .quest-item.seasonal {
+    border-left-color: #ff7f50; /* coral neon for seasonal */
+    box-shadow:
+      0 0 12px #ff7f50,
+      inset 0 0 15px #ff7f50;
+  }
+
+  .quest-item.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+    border-left-color: #006666;
+    box-shadow: none;
+  }
+
+  .quest-item:hover:not(.done) {
+    background: #062f3d;
+    box-shadow:
+      0 0 20px #00ffff,
+      inset 0 0 10px #00ffff;
+    cursor: pointer;
+  }
+
+  .quest-item input[type="checkbox"] {
+    margin-right: 20px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #00ffff;
+  }
+
+  .quest-item.seasonal input[type="checkbox"] {
+    accent-color: #ff7f50;
+  }
+
+  .quest-item label {
+    flex-grow: 1;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+
+  .category {
+    font-size: 0.9rem;
+    color: #00ffffaa;
+    font-style: italic;
+    margin-left: 12px;
+    user-select: none;
+  }
+
+  .quest-item.seasonal .category {
+    color: #ff7f50cc;
+  }
+
+  #gold-display {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #00ffff;
+    margin-bottom: 15px;
+    user-select: none;
+    text-shadow: 0 0 8px #00ffff;
+  }
+
+  #notification-permission {
+    margin-top: 12px;
+    color: #009999;
+    font-family: monospace;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  #current-time {
+    margin-top: 15px;
+    font-family: monospace;
+    font-size: 1rem;
+    color: #00ffffaa;
+  }
+
+  /* Shop Styles */
+  #shop-container {
+    display: none;
+    flex-direction: column;
+  }
+
+  .shop-item {
+    background: #1a2028;
+    border: 2px solid #00ffff;
+    margin: 12px 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow:
+      0 0 8px #00ffff88;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .shop-item:hover {
+    background: #062f3d;
+    box-shadow:
+      0 0 15px #00ffff,
+      inset 0 0 12px #00ffff;
+  }
+
+  .shop-item button {
+    background: #00ffff;
+    color: #121821;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .shop-item button:disabled {
+    background: #004444;
+    cursor: not-allowed;
+  }
+
+  .shop-item button:hover:not(:disabled) {
+    background: #33ffff;
+  }
+
+  #reward-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #00ffffdd;
+    color: #0b0c10;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    padding: 14px 24px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #00ffffaa;
+    user-select: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 1000;
+  }
+  #reward-popup.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>the void project</h1>
+
+<div id="gold-display">Gold: 0</div>
+
+<div id="tabs">
+  <div class="tab-button active" data-tab="hourly">Hourly Quests</div>
+  <div class="tab-button" data-tab="daily">Daily Quests</div>
+  <div class="tab-button" data-tab="weekly">Weekly Quests</div>
+  <div class="tab-button" data-tab="shop">Shop</div>
+</div>
+
+<div id="quest-container">
+  Loading quests...
+</div>
+
+<div id="shop-container">
+  Loading shop...
+</div>
+
+<button onclick="requestNotificationPermission()">ENABLE NOTIFICATIONS</button>
+<div id="notification-permission"></div>
+<div id="current-time"></div>
+
+<div id="reward-popup"></div>
+
+<script>
+  // --- Quest Data ---
+
+  // Base quests pool
+  const baseQuests = [
+    { text: "Take a 30-minute walk outside.", category: "Fitness", gold: 10 },
+    { text: "Compliment three people today.", category: "Social", gold: 10 },
+    { text: "Try cooking a new recipe.", category: "Creativity", gold: 15 },
+    { text: "Write down three things you're grateful for.", category: "Mindfulness", gold: 12 },
+    { text: "Read a chapter of a book.", category: "Learning", gold: 12 },
+    { text: "Declutter one area of your room.", category: "Productivity", gold: 15 },
+    { text: "Call a family member or friend you haven't talked to recently.", category: "Social", gold: 15 },
+    { text: "Try meditating for 10 minutes.", category: "Mindfulness", gold: 12 },
+    { text: "Learn a new word and use it in a sentence.", category: "Learning", gold: 10 },
+    { text: "Take photos of three interesting things around you.", category: "Creativity", gold: 12 },
+    { text: "Spend 15 minutes stretching or doing yoga.", category: "Fitness", gold: 12 },
+    { text: "Drink an extra glass of water today.", category: "Health", gold: 10 },
+    { text: "Write a short story or poem.", category: "Creativity", gold: 15 },
+    { text: "Do a random act of kindness.", category: "Social", gold: 15 },
+    { text: "Try to learn something new about a topic you like.", category: "Learning", gold: 15 }
+  ];
+
+  // Expand quest pool
+  const quests = [];
+  for(let i=0; i<15; i++) {
+    baseQuests.forEach((q) => {
+      quests.push({
+        text: `${q.text} (Challenge #${i + 1})`,
+        category: q.category,
+        gold: q.gold
+      });
+    });
+  }
+
+  // Seasonal event quests
+  const seasonalEvents = [
+    {
+      name: "Spring Festival",
+      start: { month: 3, day: 20 },
+      end: { month: 6, day: 20 },
+      quests: [
+        { text: "Plant some flowers or a tree.", category: "Seasonal", gold: 20 },
+        { text: "Go on a nature hike and observe spring blooms.", category: "Seasonal", gold: 20 },
+        { text: "Write a poem about spring renewal.", category: "Seasonal", gold: 22 },
+        { text: "Try a fresh spring recipe with veggies.", category: "Seasonal", gold: 18 }
+      ]
+    },
+    {
+      name: "Summer Blaze",
+      start: { month: 6, day: 21 },
+      end: { month: 9, day: 22 },
+      quests: [
+        { text: "Go swimming or visit a water spot.", category: "Seasonal", gold: 20 },
+        { text: "Host or attend a summer BBQ or picnic.", category: "Seasonal", gold: 18 },
+        { text: "Try a new summer sport or outdoor activity.", category: "Seasonal", gold: 22 },
+        { text: "Stay hydrated! Drink 3 extra glasses of water.", category: "Seasonal", gold: 15 }
+      ]
+    },
+    {
+      name: "Autumn Harvest",
+      start: { month: 9, day: 23 },
+      end: { month: 12, day: 20 },
+      quests: [
+        { text: "Collect colorful autumn leaves and make art.", category: "Seasonal", gold: 20 },
+        { text: "Bake something with pumpkin or cinnamon.", category: "Seasonal", gold: 18 },
+        { text: "Visit a local harvest festival or market.", category: "Seasonal", gold: 22 },
+        { text: "Write a gratitude list for the harvest season.", category: "Seasonal", gold: 15 }
+      ]
+    },
+    {
+      name: "Winter Chill",
+      start: { month: 12, day: 21 },
+      end: { month: 3, day: 19 },
+      quests: [
+        { text: "Try a winter sport like ice skating or skiing.", category: "Seasonal", gold: 20 },
+        { text: "Drink a warm cup of cocoa or tea mindfully.", category: "Seasonal", gold: 18 },
+        { text: "Decorate your space with winter lights or crafts.", category: "Seasonal", gold: 22 },
+        { text: "Write a letter to someone you care about.", category: "Seasonal", gold: 15 }
+      ]
+    }
+  ];
+
+  // Daily quests pool (subset or unique)
+  const dailyQuestsPool = [
+    { text: "Drink 8 glasses of water.", category: "Health", gold: 25 },
+    { text: "Write 3 positive affirmations.", category: "Mindfulness", gold: 30 },
+    { text: "Spend 20 minutes learning a new skill.", category: "Learning", gold: 30 },
+    { text: "Clean your workspace.", category: "Productivity", gold: 25 },
+    { text: "Prepare a healthy meal.", category: "Health", gold: 25 },
+    { text: "Reach out to a friend and chat.", category: "Social", gold: 30 },
+    { text: "Take a photo of something beautiful.", category: "Creativity", gold: 20 },
+    { text: "Avoid social media for 2 hours.", category: "Mindfulness", gold: 30 },
+    { text: "Write a journal entry.", category: "Mindfulness", gold: 25 },
+    { text: "Practice deep breathing exercises.", category: "Mindfulness", gold: 20 }
+  ];
+
+  // Weekly quests pool
+  const weeklyQuestsPool = [
+    { text: "Complete a workout session.", category: "Fitness", gold: 50 },
+    { text: "Read a full book.", category: "Learning", gold: 60 },
+    { text: "Volunteer or help someone in need.", category: "Social", gold: 70 },
+    { text: "Try a new hobby or craft.", category: "Creativity", gold: 50 },
+    { text: "Organize your digital files.", category: "Productivity", gold: 45 },
+    { text: "Plan your week ahead.", category: "Productivity", gold: 40 },
+    { text: "Cook a special meal from scratch.", category: "Creativity", gold: 60 },
+    { text: "Go on a nature walk for 1 hour.", category: "Fitness", gold: 50 }
+  ];
+
+  // Shop items (id, name, description, cost)
+  const shopItems = [
+    { id: "themeDark", name: "Dark Theme Upgrade", desc: "Enhanced dark mode styling.", cost: 100 },
+    { id: "extraSlots", name: "Extra Quest Slots", desc: "Display 10 quests instead of 5.", cost: 250 },
+    { id: "goldMultiplier", name: "Gold Multiplier x2", desc: "Earn double gold from quests.", cost: 500 },
+    { id: "reminderPlus", name: "Reminder Plus", desc: "Get extra notifications.", cost: 150 }
+  ];
+
+  // Settings and state keys
+  const STATE_KEYS = {
+    GOLD: "sidequests_gold",
+    HOURLY_COMPLETED: "hourly_completed_",   // + hourStr
+    DAILY_COMPLETED: "daily_completed_",     // + dayStr
+    WEEKLY_COMPLETED: "weekly_completed_",   // + weekStr
+    SHOP_PURCHASES: "shop_purchases"
+  };
+
+  // Constants
+  const HOURLY_QUEST_COUNT = 5;
+  const SEASONAL_QUESTS_COUNT = 2;
+  const DAILY_QUEST_COUNT = 5;
+  const WEEKLY_QUEST_COUNT = 5;
+
+  // Current tab
+  let currentTab = "hourly";
+
+  // Gold multiplier from shop
+  let goldMultiplier = 1;
+
+  // --- Helper functions ---
+
+  function getCurrentHourString() {
+    const now = new Date();
+    return now.toISOString().slice(0,13); // YYYY-MM-DD-HH
+  }
+
+  function getCurrentDayString() {
+    const now = new Date();
+    return now.toISOString().slice(0,10); // YYYY-MM-DD
+  }
+
+  // ISO week number calculation (Monday = 1)
+  function getWeekNumber(date) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    // Set to nearest Thursday: current date + 4 - current day number
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    // First week of year
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+    return weekNo;
+  }
+  function getCurrentWeekString() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const week = getWeekNumber(now);
+    return `${year}-W${week}`;
+  }
+
+  // Check if date is inside seasonal event
+  function isDateInRange(date, start, end) {
+    const year = date.getFullYear();
+    const startDate = new Date(year, start.month -1, start.day);
+    let endDate = new Date(year, end.month -1, end.day);
+
+    if (endDate < startDate) {
+      if (date < startDate) {
+        endDate = new Date(year+1, end.month -1, end.day);
+      } else {
+        endDate = new Date(year, end.month -1, end.day);
+      }
+    }
+    return date >= startDate && date <= endDate;
+  }
+
+  function getActiveSeasonalEvent(date) {
+    for (const event of seasonalEvents) {
+      if (isDateInRange(date, event.start, event.end)) {
+        return event;
+      }
+    }
+    return null;
+  }
+
+  // Seeded random for consistent quest selection
+  function seededRandom(seedStr, max) {
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash) % max;
+  }
+
+  // Generate unique quest indexes for given seed, count, max
+  function generateQuestIndexes(seedStr, count, max) {
+    let indexes = new Set();
+    let salt = 0;
+    while (indexes.size < count) {
+      let combinedSeed = seedStr + salt;
+      let idx = seededRandom(combinedSeed, max);
+      indexes.add(idx);
+      salt++;
+      if (salt > max * 10) break;
+    }
+    return Array.from(indexes);
+  }
+
+  // Load and save completed quests for a given key
+  function loadCompleted(key) {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : {};
+  }
+
+  function saveCompleted(key, completed) {
+    localStorage.setItem(key, JSON.stringify(completed));
+  }
+
+  // Load and save gold
+  function loadGold() {
+    const g = localStorage.getItem(STATE_KEYS.GOLD);
+    return g ? parseInt(g) : 0;
+  }
+  function saveGold(amount) {
+    localStorage.setItem(STATE_KEYS.GOLD, amount);
+  }
+
+  // Load shop purchases
+  function loadShopPurchases() {
+    const data = localStorage.getItem(STATE_KEYS.SHOP_PURCHASES);
+    return data ? JSON.parse(data) : {};
+  }
+  function saveShopPurchases(purchases) {
+    localStorage.setItem(STATE_KEYS.SHOP_PURCHASES, JSON.stringify(purchases));
+  }
+
+  // Add gold with multiplier and show popup
+  function addGold(amount) {
+    const realAmount = Math.floor(amount * goldMultiplier);
+    let gold = loadGold();
+    gold += realAmount;
+    saveGold(gold);
+    updateGoldDisplay();
+    showRewardPopup(`+${realAmount} Gold`);
+  }
+
+  // Show temporary reward popup
+  function showRewardPopup(text) {
+    const popup = document.getElementById('reward-popup');
+    popup.textContent = text;
+    popup.classList.add('show');
+    setTimeout(() => {
+      popup.classList.remove('show');
+    }, 1800);
+  }
+
+  // Update gold display
+  function updateGoldDisplay() {
+    const gold = loadGold();
+    const goldDisplay = document.getElementById('gold-display');
+    goldDisplay.textContent = `Gold: ${gold}`;
+  }
+
+  // Update current time display
+  function updateCurrentTimeDisplay() {
+    const now = new Date();
+    const timeDiv = document.getElementById('current-time');
+    timeDiv.textContent = `Current time: ${now.toLocaleString()}`;
+  }
+
+  // --- Quest Rendering ---
+
+  function renderQuests() {
+    const container = document.getElementById('quest-container');
+    container.innerHTML = '';
+    const now = new Date();
+
+    if (currentTab === "hourly") {
+      renderHourlyQuests(container, now);
+    } else if (currentTab === "daily") {
+      renderDailyQuests(container, now);
+    } else if (currentTab === "weekly") {
+      renderWeeklyQuests(container, now);
+    }
+  }
+
+  // Hourly quests rendering
+  function renderHourlyQuests(container, now) {
+    const hourStr = getCurrentHourString();
+    const seasonalEvent = getActiveSeasonalEvent(now);
+    const completed = loadCompleted(STATE_KEYS.HOURLY_COMPLETED + hourStr);
+
+    let seasonalQuestIndexes = [];
+    if (seasonalEvent) {
+      seasonalQuestIndexes = generateQuestIndexes(hourStr + "-seasonal", SEASONAL_QUESTS_COUNT, seasonalEvent.quests.length);
+      seasonalQuestIndexes.forEach(idx => {
+        const quest = seasonalEvent.quests[idx];
+        const questId = `seasonal-${idx}`;
+        const isDone = completed[questId] === true;
+
+        const div = createQuestItem(quest, questId, isDone, () => {
+          updateCompletedAndReward(STATE_KEYS.HOURLY_COMPLETED + hourStr, questId, quest.gold);
+        }, true, seasonalEvent.name);
+
+        container.appendChild(div);
+      });
+    }
+
+    const remainingCount = HOURLY_QUEST_COUNT - seasonalQuestIndexes.length;
+    if (remainingCount > 0) {
+      const questIndexes = generateQuestIndexes(hourStr, remainingCount, quests.length);
+      questIndexes.forEach(idx => {
+        const quest = quests[idx];
+        const questId = `quest-${idx}`;
+        const isDone = completed[questId] === true;
+
+        const div = createQuestItem(quest, questId, isDone, () => {
+          updateCompletedAndReward(STATE_KEYS.HOURLY_COMPLETED + hourStr, questId, quest.gold);
+        });
+
+        container.appendChild(div);
+      });
+    }
+  }
+
+  // Daily quests rendering
+  function renderDailyQuests(container, now) {
+    const dayStr = getCurrentDayString();
+    const completed = loadCompleted(STATE_KEYS.DAILY_COMPLETED + dayStr);
+    const seed = dayStr + "-daily";
+
+    const indexes = generateQuestIndexes(seed, DAILY_QUEST_COUNT, dailyQuestsPool.length);
+
+    indexes.forEach(idx => {
+      const quest = dailyQuestsPool[idx];
+      const questId = `daily-${idx}`;
+      const isDone = completed[questId] === true;
+
+      const div = createQuestItem(quest, questId, isDone, () => {
+        updateCompletedAndReward(STATE_KEYS.DAILY_COMPLETED + dayStr, questId, quest.gold);
+      });
+
+      container.appendChild(div);
+    });
+  }
+
+  // Weekly quests rendering
+  function renderWeeklyQuests(container, now) {
+    const weekStr = getCurrentWeekString();
+    const completed = loadCompleted(STATE_KEYS.WEEKLY_COMPLETED + weekStr);
+    const seed = weekStr + "-weekly";
+
+    const indexes = generateQuestIndexes(seed, WEEKLY_QUEST_COUNT, weeklyQuestsPool.length);
+
+    indexes.forEach(idx => {
+      const quest = weeklyQuestsPool[idx];
+      const questId = `weekly-${idx}`;
+      const isDone = completed[questId] === true;
+
+      const div = createQuestItem(quest, questId, isDone, () => {
+        updateCompletedAndReward(STATE_KEYS.WEEKLY_COMPLETED + weekStr, questId, quest.gold);
+      });
+
+      container.appendChild(div);
+    });
+  }
+
+  // Create quest item div with checkbox and reward logic
+  function createQuestItem(quest, questId, isDone, onToggle, isSeasonal=false, seasonalName="") {
+    const div = document.createElement('div');
+    div.className = 'quest-item' + (isSeasonal ? ' seasonal' : '') + (isDone ? ' done' : '');
+    if (isSeasonal) div.title = `Seasonal Event: ${seasonalName}`;
+    else div.title = quest.category;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = questId;
+    checkbox.checked = isDone;
+    checkbox.addEventListener('change', () => {
+      onToggle(checkbox.checked);
+      if (checkbox.checked) {
+        div.classList.add('done');
+      } else {
+        div.classList.remove('done');
+      }
+    });
+
+    const label = document.createElement('label');
+    label.htmlFor = questId;
+    label.textContent = quest.text;
+
+    const catSpan = document.createElement('span');
+    catSpan.className = 'category';
+    catSpan.textContent = quest.category;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    div.appendChild(catSpan);
+
+    return div;
+  }
+
+  // Mark quest completed and reward gold
+  function updateCompletedAndReward(storageKey, questId, goldReward) {
+    const completed = loadCompleted(storageKey);
+    completed[questId] = true;
+    saveCompleted(storageKey, completed);
+    addGold(goldReward);
+  }
+
+  // --- Shop ---
+
+  function renderShop() {
+    const container = document.getElementById('shop-container');
+    container.innerHTML = '';
+
+    const purchases = loadShopPurchases();
+
+    shopItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'shop-item';
+
+      const desc = document.createElement('div');
+      desc.innerHTML = `<strong>${item.name}</strong><br/><small>${item.desc}</small>`;
+
+      const btn = document.createElement('button');
+      btn.textContent = `Buy: ${item.cost} Gold`;
+      btn.disabled = purchases[item.id] === true || loadGold() < item.cost;
+
+      btn.onclick = () => {
+        buyShopItem(item);
+      };
+
+      div.appendChild(desc);
+      div.appendChild(btn);
+      container.appendChild(div);
+    });
+  }
+
+  function buyShopItem(item) {
+    let gold = loadGold();
+    if (gold < item.cost) return;
+
+    gold -= item.cost;
+    saveGold(gold);
+
+    const purchases = loadShopPurchases();
+    purchases[item.id] = true;
+    saveShopPurchases(purchases);
+
+    applyShopEffects();
+
+    renderShop();
+    updateGoldDisplay();
+    showRewardPopup(`Purchased ${item.name}!`);
+  }
+
+  // Apply effects of purchased items
+  function applyShopEffects() {
+    const purchases = loadShopPurchases();
+    goldMultiplier = purchases.goldMultiplier ? 2 : 1;
+
+    // For now, only goldMultiplier effect implemented
+    // You can add others like extraSlots or theme changes here
+
+    // For example: if purchases.extraSlots, HOURLY_QUEST_COUNT = 10; (would require re-render)
+    if(purchases.extraSlots) {
+      // Change global HOURLY_QUEST_COUNT? For now, just alert user
+      // Implementing dynamic slot count would need code refactor
+      // alert("Extra Quest Slots purchased! (Not implemented dynamic slot count)");
+    }
+  }
+
+  // --- Tabs logic ---
+
+  const tabButtons = document.querySelectorAll('.tab-button');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = btn.getAttribute('data-tab');
+
+      document.getElementById('quest-container').style.display = currentTab === 'shop' ? 'none' : 'block';
+      document.getElementById('shop-container').style.display = currentTab === 'shop' ? 'flex' : 'none';
+
+      if(currentTab === 'shop') {
+        renderShop();
+      } else {
+        renderQuests();
+      }
+    });
+  });
+
+  // --- Notifications ---
+
+  function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+      alert('This browser does not support notifications.');
+      return;
+    }
+    Notification.requestPermission().then(permission => {
+      const div = document.getElementById('notification-permission');
+      if (permission === 'granted') {
+        div.textContent = 'Notifications enabled! You will get hourly reminders.';
+        scheduleNotification();
+      } else {
+        div.textContent = 'Notifications denied or dismissed.';
+      }
+    });
+  }
+
+  function scheduleNotification() {
+    const now = new Date();
+
+    // Notify at the start of each hour
+    if (now.getMinutes() === 0 && now.getSeconds() < 10) {
+      showNotification();
+    }
+
+    setTimeout(scheduleNotification, 10000);
+  }
+
+  function showNotification() {
+    const now = new Date();
+    const hourStr = getCurrentHourString();
+    const seasonalEvent = getActiveSeasonalEvent(now);
+
+    let questsToNotify = [];
+
+    if (seasonalEvent) {
+      const seasonalQuestIndexes = generateQuestIndexes(hourStr + "-seasonal", SEASONAL_QUESTS_COUNT, seasonalEvent.quests.length);
+      questsToNotify = seasonalQuestIndexes.map(i => seasonalEvent.quests[i].text);
+    }
+
+    const remainingCount = HOURLY_QUEST_COUNT - questsToNotify.length;
+    if (remainingCount > 0) {
+      const questIndexes = generateQuestIndexes(hourStr, remainingCount, quests.length);
+      questsToNotify = questsToNotify.concat(questIndexes.map(i => quests[i].text));
+    }
+
+    if (Notification.permission === 'granted') {
+      new Notification('Your Hourly Side Quests', {
+        body: '• ' + questsToNotify.join('\n• '),
+        icon: 'https://cdn-icons-png.flaticon.com/512/2910/2910766.png',
+      });
+    }
+  }
+
+  // --- Clock and UI updates ---
+
+  function updateClockEverySecond() {
+    updateCurrentTimeDisplay();
+    setTimeout(updateClockEverySecond, 1000);
+  }
+  updateClockEverySecond();
+
+  // Refresh quests every minute to catch new hour/day/week
+  setInterval(() => {
+    renderQuests();
+  }, 60000);
+
+  // --- Initialization ---
+
+  function init() {
+    applyShopEffects();
+    updateGoldDisplay();
+    renderQuests();
+  }
+
+  init();
+</script>
+
+</body>
+</html>

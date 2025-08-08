@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fantasy Forest</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: url('/images/forest.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      padding-top: 20px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    .tools {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      padding: 20px;
+      width: fit-content;
+      cursor: grab;
+      position: absolute;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    #timer {
+      font-size: 2em;
+      margin: 10px;
+    }
+
+    .tools button {
+      padding: 6px 12px;
+      margin: 4px;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 12px;
+      background-color: #0e3e22;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .tools button:hover {
+      background-color: #20693e;
+    }
+
+    .draggable-box {
+      position: absolute;
+      z-index: 1000;
+      cursor: grab;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    #draggable-spotify {
+      width: 20%;
+      height: 152px;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="color: #255f3c;">Forest</h1>
+
+  <!-- Draggable Timer -->
+  <div class="tools draggable-box" id="draggable-timer">
+    <button id="minusBtn">-5 min</button>
+    <button id="plusBtn">+5 min</button>
+    <button id="startBtn">Start</button>
+    <button id="resetBtn">Reset</button>
+    <p id="timer">25:00</p>
+  </div>
+
+  <!-- Draggable Spotify Embed -->
+  <div class="draggable-box" id="draggable-spotify">
+    <iframe
+      data-testid="embed-iframe"
+      style="border-radius:12px"
+      src="https://open.spotify.com/embed/playlist/3duvkzeV9TxVbQtk2r0PYI?utm_source=generator"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+    ></iframe>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentTime = 25 * 60;
+      let timerInterval = null;
+
+      const timerDisplay = document.getElementById("timer");
+      const minusBtn = document.getElementById("minusBtn");
+      const plusBtn = document.getElementById("plusBtn");
+      const startBtn = document.getElementById("startBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(currentTime / 60);
+        const seconds = currentTime % 60;
+        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
+
+      function changeTime(amount) {
+        currentTime += amount * 60;
+        if (currentTime < 5 * 60) currentTime = 5 * 60;
+        updateTimerDisplay();
+      }
+
+      minusBtn.addEventListener("click", () => changeTime(-5));
+      plusBtn.addEventListener("click", () => changeTime(5));
+
+      startBtn.addEventListener("click", () => {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          if (currentTime > 0) {
+            currentTime--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            alert("Time's up!");
+          }
+        }, 1000);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        clearInterval(timerInterval);
+        currentTime = 25 * 60;
+        updateTimerDisplay();
+      });
+
+      updateTimerDisplay();
+
+      // Dragging logic for multiple boxes
+      function makeDraggable(id, centerOnLoad = false) {
+        const box = document.getElementById(id);
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        if (centerOnLoad) {
+          const centerX = window.innerWidth / 2 - box.offsetWidth / 2;
+          const centerY = window.innerHeight / 2 - box.offsetHeight / 2;
+          box.style.left = `${centerX}px`;
+          box.style.top = `${centerY}px`;
+        }
+
+        box.addEventListener("mousedown", (e) => {
+          isDragging = true;
+          offsetX = e.clientX - box.getBoundingClientRect().left;
+          offsetY = e.clientY - box.getBoundingClientRect().top;
+          box.style.cursor = "grabbing";
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (isDragging) {
+            box.style.left = `${e.clientX - offsetX}px`;
+            box.style.top = `${e.clientY - offsetY}px`;
+          }
+        });
+
+        document.addEventListener("mouseup", () => {
+          isDragging = false;
+          box.style.cursor = "grab";
+        });
+      }
+
+      makeDraggable("draggable-spotify");
+      makeDraggable("draggable-timer", true); // Start timer centered
+    });
+  </script>
+</body>
+</html>

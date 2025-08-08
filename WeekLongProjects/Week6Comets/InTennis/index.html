@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INTENNIS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('Photo 1.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .center-text {
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 40px 20px;
+      margin: 30px auto 0;
+      border-radius: 10px;
+      max-width: 800px;
+    }
+
+    .center-text h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .center-text h2 {
+      font-size: 28px;
+    }
+
+    .gallery {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 50px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .gallery-div {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: slideIn 1s ease forwards;
+    }
+
+    /* Delay each image */
+    .gallery-div:nth-child(1) { animation-delay: 0.2s; }
+    .gallery-div:nth-child(2) { animation-delay: 0.4s; }
+    .gallery-div:nth-child(3) { animation-delay: 0.6s; }
+    .gallery-div:nth-child(4) { animation-delay: 0.8s; }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .gallery-div a {
+      text-decoration: none;
+      color: white;
+      text-align: center;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-div a:hover {
+      transform: scale(1.05);
+    }
+
+    .gallery-div img {
+      width: 180px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      margin-bottom: 10px;
+    }
+
+    .gallery-div p {
+      font-size: 18px;
+    }
+
+    @media (max-width: 600px) {
+      .center-text h1 {
+        font-size: 32px;
+      }
+
+      .center-text h2 {
+        font-size: 20px;
+      }
+
+      .gallery-div img {
+        width: 120px;
+      }
+
+      .gallery-div p {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="center-text">
+    <h1>WELCOME TO INTENNIS</h1>
+    <h2>Select Your Tennis Player</h2>
+  </div>
+
+  <div class="gallery">
+    <div class="gallery-div">
+      <a href="federer.html">
+        <img src="Photo 2.jpg" alt="Roger Federer" />
+        <p>Roger Federer</p>
+      </a>
+    </div>
+
+    <div class="gallery-div">
+      <a href="alcaraz.html">
+        <img src="Photo 3.jpg" alt="Carlos Alcaraz" />
+        <p>Carlos Alcaraz</p>
+      </a>
+    </div>
+
+    <div class="gallery-div">
+      <a href="djokovic.html">
+        <img src="Photo 4.jpg" alt="Novak Djokovic" />
+        <p>Novak Djokovic</p>
+      </a>
+    </div>
+
+    <div class="gallery-div">
+      <a href="sinner.html">
+        <img src="Photo 6.jpg" alt="Jannik Sinner" />
+        <p>Jannik Sinner</p>
+      </a>
+    </div>
+
+      <div class="gallery-div">
+      <a href="Play the game itself.html">
+        <img src="Photo 1.jpg" alt="Jannik Sinner" />
+        <p>Play the game itself</p>
+      </a>
+      </div>
+
+      <div class="gallery-div">
+      <a href="Mini game.html">
+        <img src="Photo 1.jpg" alt="Jannik Sinner" />
+        <p>mini game</p>
+      </a>
+      </div>
+
+    <!-- Add more players as needed -->
+  </div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to INTENNIS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-image: url('Photo 1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .intro-container {
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 50px 30px;
+      border-radius: 12px;
+      animation: fadeIn 2s ease;
+    }
+
+    .intro-container h1 {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .intro-container p {
+      font-size: 20px;
+      margin-bottom: 40px;
+    }
+
+    .enter-btn {
+      font-size: 18px;
+      padding: 12px 30px;
+      background-color: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .enter-btn:hover {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .intro-container h1 {
+        font-size: 32px;
+      }
+
+      .intro-container p {
+        font-size: 16px;
+      }
+
+      .enter-btn {
+        font-size: 16px;
+        padding: 10px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="intro-container">
+    <h1>Welcome to INTENNIS</h1>
+    <p>Discover your favorite tennis players and play the game!</p>
+    <a href="Rules.html">
+      <button class="enter-btn">Enter Site</button>
+    </a>
+  </div>
+
+</body>
+</html>

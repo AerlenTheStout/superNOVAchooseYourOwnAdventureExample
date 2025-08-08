@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IQ Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7f9; /* light turquoise */
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .question {
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .options label {
+      display: block;
+      margin-bottom: 5px;
+      padding: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .options label:hover {
+      background-color: #f0f0f0;
+    }
+    #submitBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #submitBtn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #result {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 30px;
+    }
+    #timer {
+      text-align: center;
+      font-size: 18px;
+      margin: 10px;
+      color: red;
+      font-weight: bold;
+    }
+    .correct {
+      background-color: #c8e6c9 !important;
+    }
+    .incorrect {
+      background-color: #ffcdd2 !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>IQ Test</h1>
+  <div id="timer">Time Left: 10:00</div>
+  <form id="iqForm">
+    <div id="questions"></div>
+    <button type="submit" id="submitBtn">Submit</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      { q: "1. What number comes next in the series: 2, 4, 8, 16, ?", options: ["18", "24", "32", "20"], answer: 2 },
+      { q: "2. Which shape has 3 sides?", options: ["Circle", "Triangle", "Square", "Rectangle"], answer: 1 },
+      { q: "3. Which number is the odd one out? 3, 5, 7, 9, 11", options: ["3", "5", "7", "9"], answer: 3 },
+      { q: "4. Which comes next? A, C, E, G, ?", options: ["H", "I", "J", "I"], answer: 1 },
+      { q: "5. How many legs does a spider have?", options: ["6", "8", "10", "12"], answer: 1 },
+      { q: "6. 12 is to 144 as 6 is to?", options: ["36", "64", "48", "72"], answer: 0 },
+      { q: "7. What is the square root of 81?", options: ["7", "8", "9", "10"], answer: 2 },
+      { q: "8. What comes next: 1, 4, 9, 16, ?", options: ["20", "25", "30", "36"], answer: 1 },
+      { q: "9. Which of these is not a prime number?", options: ["2", "3", "9", "7"], answer: 2 },
+      { q: "10. How many hours in 3 days?", options: ["72", "60", "48", "36"], answer: 0 },
+      { q: "11. What is 15% of 200?", options: ["20", "25", "30", "35"], answer: 2 },
+      { q: "12. Which number is missing: 5, 10, __, 20, 25", options: ["12", "15", "18", "17"], answer: 1 },
+      { q: "13. Which letter is 5th in the alphabet?", options: ["E", "D", "F", "G"], answer: 0 },
+      { q: "14. What is half of 64?", options: ["30", "32", "34", "36"], answer: 1 },
+      { q: "15. What is 7 x 6?", options: ["42", "36", "48", "56"], answer: 0 },
+      { q: "16. What is next: 100, 90, 80, ?", options: ["70", "75", "85", "60"], answer: 0 },
+      { q: "17. Which is heavier: 1kg of iron or 1kg of feathers?", options: ["Iron", "Feathers", "Same", "None"], answer: 2 },
+      { q: "18. If a train is going 60 mph, how far will it travel in 3 hours?", options: ["120", "180", "150", "200"], answer: 1 },
+      { q: "19. Opposite of 'hot'?", options: ["Warm", "Cold", "Cool", "Boiling"], answer: 1 },
+      { q: "20. 5 + (3 × 2) = ?", options: ["11", "16", "10", "9"], answer: 0 },
+      { q: "21. Which word is a synonym of 'Happy'?", options: ["Sad", "Joyful", "Angry", "Tired"], answer: 1 },
+      { q: "22. What is 1000 ÷ 10?", options: ["100", "10", "1000", "90"], answer: 0 },
+      { q: "23. If you rearrange 'L I S T E N' you get?", options: ["Silent", "Listen", "Enlist", "Tinsel"], answer: 0 },
+      { q: "24. 20% of 50 is?", options: ["5", "10", "15", "20"], answer: 1 },
+      { q: "25. What is the capital of France?", options: ["Berlin", "Paris", "London", "Rome"], answer: 1 },
+    ];
+
+    // Shuffle questions randomly
+    const shuffled = questions.sort(() => Math.random() - 0.5);
+
+    const quizContainer = document.getElementById("questions");
+
+    // Render questions and options
+    shuffled.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.dataset.qIndex = index;
+      div.innerHTML = `<p>${q.q}</p>`;
+      q.options.forEach((opt, i) => {
+        div.innerHTML += `
+          <div class="options">
+            <label>
+              <input type="radio" name="q${index}" value="${i}" required> ${opt}
+            </label>
+          </div>`;
+      });
+      quizContainer.appendChild(div);
+    });
+
+    const form = document.getElementById("iqForm");
+    const timerDisplay = document.getElementById("timer");
+    let time = 600; // 10 minutes in seconds
+    let timerInterval;
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (time <= 0) {
+          clearInterval(timerInterval);
+          alert("Time is up! Submitting your answers...");
+          form.requestSubmit();
+          return;
+        }
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerDisplay.textContent = `Time Left: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        time--;
+      }, 1000);
+    }
+
+    startTimer();
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      clearInterval(timerInterval);
+
+      let score = 0;
+
+      shuffled.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const questionDiv = document.querySelector(`.question[data-q-index="${i}"]`);
+        const correctIndex = q.answer;
+
+        // Remove old highlights
+        const allInputs = questionDiv.querySelectorAll("input");
+        allInputs.forEach(input => {
+          input.parentElement.classList.remove("correct", "incorrect");
+          input.disabled = true;
+        });
+
+        if (selected) {
+          if (parseInt(selected.value, 10) === correctIndex) {
+            score++;
+            selected.parentElement.classList.add("correct");
+          } else {
+            selected.parentElement.classList.add("incorrect");
+            // Highlight the correct answer
+            const correctInput = questionDiv.querySelector(`input[value="${correctIndex}"]`);
+            if (correctInput) {
+              correctInput.parentElement.classList.add("correct");
+            }
+          }
+        } else {
+          // No answer selected, just highlight correct
+          const correctInput = questionDiv.querySelector(`input[value="${correctIndex}"]`);
+          if (correctInput) {
+            correctInput.parentElement.classList.add("correct");
+          }
+        }
+      });
+
+      const iq = 80 + score * 2;
+      document.getElementById("result").textContent = `Your Estimated IQ: ${iq} (Score: ${score} / 25)`;
+
+      document.getElementById("submitBtn").disabled = true;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Realistic AI Bike Rating Bot</title>
+<style>
+  body {
+    max-width: 650px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    color: #222;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #007acc;
+    margin-bottom: 1rem;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+  select, button {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-top: 0.4rem;
+    transition: border-color 0.3s;
+  }
+  select:focus, button:focus {
+    outline: none;
+    border-color: #007acc;
+  }
+  button {
+    background: #007acc;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    border: none;
+    user-select: none;
+  }
+  button:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+  .result {
+    margin-top: 2rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #007acc;
+    text-align: center;
+    white-space: pre-line;
+  }
+</style>
+</head>
+<body>
+
+<h1>Realistic AI Bike Rating Bot</h1>
+
+<label for="brand">Select Brand:</label>
+<select id="brand">
+  <option value="">-- Select Brand --</option>
+</select>
+
+<label for="type">Select Bike Type:</label>
+<select id="type" disabled>
+  <option value="">-- Select Type --</option>
+</select>
+
+<label for="subtype" id="subtype-label" style="display:none;">Select Mountain Subtype:</label>
+<select id="subtype" style="display:none;">
+  <option value="">-- Select Subtype --</option>
+</select>
+
+<label for="model">Select Model:</label>
+<select id="model" disabled>
+  <option value="">-- Select Model --</option>
+</select>
+
+<button id="rateBtn" disabled>Rate My Bike</button>
+
+<div id="result" class="result" style="display:none;"></div>
+
+<script>
+  const bikeData = {
+    "Specialized": {
+      "Mountain": {
+        "Trail": {
+          "Status 140 S0": {suspensionTravel: 140, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1},
+          "Stumpjumper": {suspensionTravel: 130, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 1}
+        },
+        "DH": {
+          "Demo 29": {suspensionTravel: 200, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 0.9}
+        },
+        "Enduro": {
+          "Enduro Pro": {suspensionTravel: 170, frameMaterial: 3, groupsetQuality: 9.5, wheelSize: 29, intendedUseFactor: 1.1}
+        }
+      },
+      "Road": {
+        "": {
+          "Tarmac SL7": {suspensionTravel: 0, frameMaterial: 3, groupsetQuality: 9.7, wheelSize: 28, intendedUseFactor: 1}
+        }
+      },
+      "Gravel": {
+        "": {
+          "Diverge": {suspensionTravel: 30, frameMaterial: 3, groupsetQuality: 8, wheelSize: 28, intendedUseFactor: 0.9}
+        }
+      }
+    },
+    "Kona": {
+      "Mountain": {
+        "Trail": {
+          "Process 134": {suspensionTravel: 134, frameMaterial: 2, groupsetQuality: 7.5, wheelSize: 27.5, intendedUseFactor: 1},
+          "Roscoe": {suspensionTravel: 130, frameMaterial: 2, groupsetQuality: 7, wheelSize: 27.5, intendedUseFactor: 0.9}
+        },
+        "DH": {
+          "Operator": {suspensionTravel: 190, frameMaterial: 2, groupsetQuality: 7, wheelSize: 27.5, intendedUseFactor: 0.8}
+        },
+        "Enduro": {
+          "Kahuna": {suspensionTravel: 170, frameMaterial: 2, groupsetQuality: 8, wheelSize: 27.5, intendedUseFactor: 1.1}
+        }
+      },
+      "Road": {
+        "": {
+          "Roadhouse": {suspensionTravel: 0, frameMaterial: 2, groupsetQuality: 7.5, wheelSize: 28, intendedUseFactor: 1}
+        }
+      }
+    },
+    "Evo": {
+      "Mountain": {
+        "Trail": {
+          "Fire Ridge": {suspensionTravel: 120, frameMaterial: 2, groupsetQuality: 6.5, wheelSize: 27.5, intendedUseFactor: 1},
+          "Gridline": {suspensionTravel: 110, frameMaterial: 2, groupsetQuality: 6, wheelSize: 27.5, intendedUseFactor: 0.9}
+        },
+        "DH": {
+          "Scoop": {suspensionTravel: 180, frameMaterial: 2, groupsetQuality: 6.5, wheelSize: 27.5, intendedUseFactor: 0.8}
+        },
+        "Enduro": {
+          "Stone": {suspensionTravel: 160, frameMaterial: 2, groupsetQuality: 7, wheelSize: 27.5, intendedUseFactor: 1}
+        }
+      },
+      "Gravel": {
+        "": {
+          "Rival": {suspensionTravel: 20, frameMaterial: 2, groupsetQuality: 6, wheelSize: 28, intendedUseFactor: 0.8}
+        }
+      }
+    },
+    "Rocky Mountain": {
+      "Mountain": {
+        "Trail": {
+          "Altitude": {suspensionTravel: 160, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 1},
+          "Instinct": {suspensionTravel: 140, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 0.95}
+        },
+        "DH": {
+          "Slayer": {suspensionTravel: 200, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 0.85}
+        },
+        "Enduro": {
+          "Pipeline": {suspensionTravel: 170, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1.05}
+        }
+      }
+    },
+    "Propain": {
+      "Mountain": {
+        "Trail": {
+          "Tyee": {suspensionTravel: 150, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 1},
+          "Spindrift": {suspensionTravel: 140, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 0.95}
+        },
+        "Enduro": {
+          "Tyee CF": {suspensionTravel: 160, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1.1}
+        },
+        "DH": {
+          "Hellion": {suspensionTravel: 190, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 0.9}
+        }
+      }
+    },
+    // New brands added below
+    "YT": {
+      "Mountain": {
+        "Trail": {
+          "Jeffsy 29": {suspensionTravel: 150, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1},
+          "Izzo": {suspensionTravel: 130, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 27.5, intendedUseFactor: 0.9}
+        },
+        "Enduro": {
+          "Tues": {suspensionTravel: 170, frameMaterial: 3, groupsetQuality: 9.5, wheelSize: 29, intendedUseFactor: 1.1}
+        }
+      }
+    },
+    "Yeti": {
+      "Mountain": {
+        "Trail": {
+          "SB130": {suspensionTravel: 130, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1},
+          "SB115": {suspensionTravel: 115, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 0.9}
+        },
+        "Enduro": {
+          "SB150": {suspensionTravel: 150, frameMaterial: 3, groupsetQuality: 9.5, wheelSize: 29, intendedUseFactor: 1.1}
+        }
+      }
+    },
+    "Orbea": {
+      "Mountain": {
+        "Trail": {
+          "Occam": {suspensionTravel: 140, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 1},
+          "Rallon": {suspensionTravel: 160, frameMaterial: 3, groupsetQuality: 8.7, wheelSize: 29, intendedUseFactor: 1.05}
+        },
+        "Enduro": {
+          "Wild FS": {suspensionTravel: 170, frameMaterial: 3, groupsetQuality: 9, wheelSize: 29, intendedUseFactor: 1.1}
+        }
+      },
+      "Road": {
+        "": {
+          "Orca": {suspensionTravel: 0, frameMaterial: 3, groupsetQuality: 9, wheelSize: 28, intendedUseFactor: 1}
+        }
+      }
+    },
+    "Cube": {
+      "Mountain": {
+        "Trail": {
+          "Stereo 150": {suspensionTravel: 150, frameMaterial: 3, groupsetQuality: 8, wheelSize: 29, intendedUseFactor: 1},
+          "Stereo 140": {suspensionTravel: 140, frameMaterial: 3, groupsetQuality: 7.8, wheelSize: 29, intendedUseFactor: 0.95}
+        },
+        "Enduro": {
+          "Stereo 170": {suspensionTravel: 170, frameMaterial: 3, groupsetQuality: 8.5, wheelSize: 29, intendedUseFactor: 1.05}
+        }
+      }
+    },
+    "Polygon": {
+      "Mountain": {
+        "Trail": {
+          "Siskiu T8": {suspensionTravel: 140, frameMaterial: 2, groupsetQuality: 7, wheelSize: 29, intendedUseFactor: 1},
+          "Sisiku D7": {suspensionTravel: 130, frameMaterial: 2, groupsetQuality: 6.5, wheelSize: 29, intendedUseFactor: 0.9}
+        },
+        "Enduro": {
+          "Sisiku N9": {suspensionTravel: 160, frameMaterial: 2, groupsetQuality: 7.5, wheelSize: 29, intendedUseFactor: 1.1}
+        }
+      }
+    }
+  };
+
+  const brandSelect = document.getElementById('brand');
+  const typeSelect = document.getElementById('type');
+  const subtypeSelect = document.getElementById('subtype');
+  const modelSelect = document.getElementById('model');
+  const rateBtn = document.getElementById('rateBtn');
+  const resultDiv = document.getElementById('result');
+  const subtypeLabel = document.getElementById('subtype-label');
+
+  function clearSelect(select) {
+    select.innerHTML = '';
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = `-- Select ${select.id.charAt(0).toUpperCase() + select.id.slice(1)} --`;
+    select.appendChild(option);
+  }
+
+  function populateBrands() {
+    clearSelect(brandSelect);
+    Object.keys(bikeData).forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandSelect.appendChild(option);
+    });
+    typeSelect.disabled = true;
+    subtypeSelect.style.display = 'none';
+    subtypeLabel.style.display = 'none';
+    modelSelect.disabled = true;
+    rateBtn.disabled = true;
+    clearSelect(typeSelect);
+    clearSelect(subtypeSelect);
+    clearSelect(modelSelect);
+    resultDiv.style.display = 'none';
+  }
+
+  function populateTypes() {
+    clearSelect(typeSelect);
+    clearSelect(subtypeSelect);
+    clearSelect(modelSelect);
+    subtypeSelect.style.display = 'none';
+    subtypeLabel.style.display = 'none';
+    modelSelect.disabled = true;
+    rateBtn.disabled = true;
+    resultDiv.style.display = 'none';
+
+    const brand = brandSelect.value;
+    if (!brand) {
+      typeSelect.disabled = true;
+      return;
+    }
+    const types = Object.keys(bikeData[brand]);
+    types.forEach(type => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.textContent = type || "General";
+      typeSelect.appendChild(option);
+    });
+    typeSelect.disabled = false;
+  }
+
+  function populateSubtypesOrModels() {
+    clearSelect(subtypeSelect);
+    clearSelect(modelSelect);
+    modelSelect.disabled = true;
+    rateBtn.disabled = true;
+    resultDiv.style.display = 'none';
+
+    const brand = brandSelect.value;
+    const type = typeSelect.value;
+    if (!type) {
+      subtypeSelect.style.display = 'none';
+      subtypeLabel.style.display = 'none';
+      modelSelect.disabled = true;
+      return;
+    }
+    if (type === "Mountain") {
+      const subtypes = Object.keys(bikeData[brand][type]);
+      if (subtypes.length > 1 || (subtypes.length === 1 && subtypes[0] !== "")) {
+        subtypeSelect.style.display = 'block';
+        subtypeLabel.style.display = 'block';
+        subtypes.forEach(subtype => {
+          const option = document.createElement('option');
+          option.value = subtype;
+          option.textContent = subtype || "General";
+          subtypeSelect.appendChild(option);
+        });
+        subtypeSelect.disabled = false;
+        modelSelect.disabled = true;
+      } else {
+        subtypeSelect.style.display = 'none';
+        subtypeLabel.style.display = 'none';
+        populateModels();
+      }
+    } else {
+      subtypeSelect.style.display = 'none';
+      subtypeLabel.style.display = 'none';
+      populateModels();
+    }
+  }
+
+  function populateModels() {
+    clearSelect(modelSelect);
+    rateBtn.disabled = true;
+    resultDiv.style.display = 'none';
+
+    const brand = brandSelect.value;
+    const type = typeSelect.value;
+    let subtype = subtypeSelect.value;
+    if (!subtype && type === "Mountain") {
+      subtype = Object.keys(bikeData[brand][type])[0];
+    }
+    if (!brand || !type) {
+      modelSelect.disabled = true;
+      return;
+    }
+
+    let modelsList;
+    if (type === "Mountain") {
+      if (!subtype || !bikeData[brand][type][subtype]) {
+        modelSelect.disabled = true;
+        return;
+      }
+      modelsList = Object.keys(bikeData[brand][type][subtype]);
+    } else {
+      if (!bikeData[brand][type][""]) {
+        modelSelect.disabled = true;
+        return;
+      }
+      modelsList = Object.keys(bikeData[brand][type][""]);
+    }
+    modelsList.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+    modelSelect.disabled = false;
+  }
+
+  function checkRateBtn() {
+    rateBtn.disabled = !(brandSelect.value && typeSelect.value && modelSelect.value && (typeSelect.value !== "Mountain" || subtypeSelect.value));
+  }
+
+  function rateBike() {
+    const brand = brandSelect.value;
+    const type = typeSelect.value;
+    const model = modelSelect.value;
+    let subtype = subtypeSelect.value;
+    if (type === "Mountain" && !subtype) {
+      subtype = Object.keys(bikeData[brand][type])[0];
+    }
+
+    let specs;
+    if (type === "Mountain") {
+      specs = bikeData[brand][type][subtype][model];
+    } else {
+      specs = bikeData[brand][type][""][model];
+    }
+
+    // Realistic rating calculation
+    // Score components normalized to ~10 scale:
+    // Suspension Travel max ~200 mm (scaled 0-5 points)
+    // Frame material: 1(plastic)=1, 2(aluminum)=2, 3(carbon)=3 (scaled 0-3 points)
+    // Groupset quality: out of 10, scaled 0-2 points
+    // Wheel size bonus: 29"+0.5, 27.5+0.25, else 0 points
+    // Intended use factor multiplier (0.8 to 1.2 range)
+
+    const travelScore = Math.min(specs.suspensionTravel / 40, 5); // max 200 mm travel => 5 pts
+    const frameScore = specs.frameMaterial; // 1-3 pts
+    const groupsetScore = (specs.groupsetQuality / 10) * 2; // 0-2 pts
+    let wheelScore = 0;
+    if (specs.wheelSize >= 29) wheelScore = 0.5;
+    else if (specs.wheelSize >= 27) wheelScore = 0.25;
+
+    const baseScore = travelScore + frameScore + groupsetScore + wheelScore; // max ~10
+    const finalScore = baseScore * specs.intendedUseFactor;
+    const cappedScore = Math.min(finalScore, 10);
+
+    const explanation = 
+      `Brand: ${brand}\n` +
+      `Type: ${type}\n` +
+      (type === "Mountain" ? `Subtype: ${subtype}\n` : '') +
+      `Model: ${model}\n\n` +
+      `Suspension Travel: ${specs.suspensionTravel} mm → ${(travelScore).toFixed(2)} pts\n` +
+      `Frame Material (1=Plastic, 2=Aluminum, 3=Carbon): ${specs.frameMaterial} → ${(frameScore).toFixed(2)} pts\n` +
+      `Groupset Quality (out of 10): ${specs.groupsetQuality} → ${(groupsetScore).toFixed(2)} pts\n` +
+      `Wheel Size: ${specs.wheelSize} inch → ${(wheelScore).toFixed(2)} pts\n` +
+      `Intended Use Multiplier: ${specs.intendedUseFactor}\n\n` +
+      `→ Final Score: ${cappedScore.toFixed(2)} / 10`;
+
+    resultDiv.textContent = explanation;
+    resultDiv.style.display = 'block';
+  }
+
+  brandSelect.addEventListener('change', () => {
+    populateTypes();
+    rateBtn.disabled = true;
+  });
+
+  typeSelect.addEventListener('change', () => {
+    populateSubtypesOrModels();
+    rateBtn.disabled = true;
+  });
+
+  subtypeSelect.addEventListener('change', () => {
+    populateModels();
+    rateBtn.disabled = true;
+  });
+
+  modelSelect.addEventListener('change', () => {
+    checkRateBtn();
+  });
+
+  rateBtn.addEventListener('click', rateBike);
+
+  populateBrands();
+</script>
+
+</body>
+</html>

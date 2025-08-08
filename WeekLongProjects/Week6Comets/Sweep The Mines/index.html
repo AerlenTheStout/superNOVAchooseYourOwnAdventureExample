@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sweep The Mines - Die Once To Activate Shop Feature</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #D2B48C;
+    overflow: hidden;
+    user-select: none;
+    display: flex;
+  }
+
+  #shopPanel {
+    width: 280px;
+    background: #332e1c;
+    color: #eee;
+    padding: 15px;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+  }
+  #shopPanel h2 {
+    margin: 0 0 15px 0;
+    text-align: center;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 0 0 5px #b8860b;
+  }
+  #coinsDisplay {
+    font-size: 22px;
+    font-weight: bold;
+    color: gold;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  #itemsList {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  .shopItem {
+    background: #4b4323;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .shopItem:hover {
+    background: #5c5229;
+  }
+  .shopItem.disabled {
+    background: #2f2b17;
+    cursor: default;
+    color: #666;
+  }
+  .shopItem .desc {
+    flex: 1;
+    margin-right: 10px;
+  }
+  .shopItem .cost {
+    font-weight: bold;
+    color: gold;
+  }
+  #gameContainer {
+    flex-grow: 1;
+    position: relative;
+    background: #a18850;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #gameCanvas {
+    background: #cfc19e;
+    border: 4px solid #a06f3b;
+    image-rendering: pixelated;
+    max-width: 100vw;
+    max-height: 100vh;
+    display: block;
+  }
+
+  #hudPanel {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(60,50,30,0.85);
+    padding: 10px 20px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    user-select: none;
+    width: 400px;
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+
+  #messageOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
+    flex-direction: column;
+    z-index: 20;
+  }
+  #messageOverlay.show {
+    pointer-events: all;
+    opacity: 1;
+  }
+  #replayBtn {
+    margin-top: 25px;
+    padding: 15px 40px;
+    font-size: 24px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+  }
+  #replayBtn:hover {
+    background: #45a049;
+  }
+
+  #startScreen {
+    position: fixed;
+    inset: 0;
+    background: #2e2b20;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+    padding: 20px;
+  }
+  #startScreen h1 {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  #startScreen p {
+    font-size: 18px;
+    max-width: 600px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+  }
+  #colorSelectContainer {
+    margin-bottom: 20px;
+  }
+  .colorOption {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin: 0 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  .colorOption.selected {
+    border-color: gold;
+  }
+  #startBtn {
+    font-size: 24px;
+    padding: 12px 40px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+  }
+  #startBtn:hover {
+    background: #45a049;
+  }
+</style>
+</head>
+<body>
+
+<div id="shopPanel">
+  <h2>Shop</h2>
+  <div id="coinsDisplay">Coins: 0</div>
+  <div id="itemsList"></div>
+</div>
+
+<div id="gameContainer">
+  <canvas id="gameCanvas"></canvas>
+  <div id="hudPanel">
+    Mines Defused: <span id="minesDefused">0</span> &nbsp;&nbsp;|&nbsp;&nbsp;
+    Mistakes: <span id="mistakesCount">0</span> &nbsp;&nbsp;|&nbsp;&nbsp;
+    Time: <span id="timeElapsed">0.0</span>s
+  </div>
+</div>
+
+<div id="messageOverlay">
+  <div id="messageText"></div>
+  <button id="replayBtn">Restart</button>
+</div>
+
+<div id="startScreen">
+  <h1>Sweep The Mines</h1>
+  <p>Welcome to Sweep The Mines! Your goal is to carefully find and defuse hidden mines by holding SPACE near them. Avoid stepping directly on mines or you’ll explode. Collect coins by defusing mines to buy upgrades and power-ups in the shop. Choose your player color below and press Start to begin!</p>
+
+  <div id="colorSelectContainer">
+    <span>Select Player Color:</span><br/>
+    <div class="colorOption" style="background:#1E90FF;" data-color="#1E90FF" title="Blue"></div>
+    <div class="colorOption" style="background:#FF4500;" data-color="#FF4500" title="Orange"></div>
+    <div class="colorOption" style="background:#32CD32;" data-color="#32CD32" title="Green"></div>
+    <div class="colorOption" style="background:#FFD700;" data-color="#FFD700" title="Gold"></div>
+    <div class="colorOption" style="background:#8A2BE2;" data-color="#8A2BE2" title="Purple"></div>
+  </div>
+
+  <button id="startBtn">Start Game</button>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const messageOverlay = document.getElementById('messageOverlay');
+  const messageText = document.getElementById('messageText');
+  const replayBtn = document.getElementById('replayBtn');
+
+  const coinsDisplay = document.getElementById('coinsDisplay');
+  const itemsList = document.getElementById('itemsList');
+
+  const minesDefusedSpan = document.getElementById('minesDefused');
+  const mistakesCountSpan = document.getElementById('mistakesCount');
+  const timeElapsedSpan = document.getElementById('timeElapsed');
+
+  const startScreen = document.getElementById('startScreen');
+  const startBtn = document.getElementById('startBtn');
+  const colorOptions = [...document.querySelectorAll('.colorOption')];
+
+  let playerColor = '#1E90FF'; // default blue
+  let canvasWidth, canvasHeight;
+
+  const playerRadius = 15;
+  let player = {
+    x: 0,
+    y: 0,
+    radius: playerRadius,
+    baseSpeed: 1.7,
+    speed: 1.7,
+    color: playerColor,
+  };
+
+  const mines = [];
+  const NUM_MINES = 40;
+
+  let coins = 0;
+  let minesDefused = 0;
+  let mistakes = 0;
+  let gameEnded = false;
+  let startTime = 0;
+  let elapsedSeconds = 0;
+
+  let defuseHoldTime = 2000;
+  let defuseInProgress = false;
+  let defuseMine = null;
+  let defuseStart = 0;
+
+  const shopItems = [
+    {
+      id: 'speedBoost',
+      name: 'Speed Boost',
+      desc: 'Boost speed 50% for 15 seconds',
+      cost: 150,
+      active: false,
+      activeUntil: 0,
+      apply() {
+        if(this.active) {
+          player.speed = player.baseSpeed * 1.5;
+        } else {
+          player.speed = player.baseSpeed;
+        }
+      }
+    },
+    {
+      id: 'mineDetector',
+      name: 'Mine Detector Drone',
+      desc: 'Show all mines for 5 seconds',
+      cost: 200,
+      active: false,
+      activeUntil: 0,
+    },
+    {
+      id: 'extraDefuse',
+      name: 'Extra Defuse Time',
+      desc: 'Add 1 second to defuse time (max 3)',
+      cost: 120,
+      bought: 0,
+      max: 3,
+      apply() {
+        defuseHoldTime = 2000 + this.bought * 1000;
+      }
+    },
+    {
+      id: 'shield',
+      name: 'Shield',
+      desc: 'One-time protection from mine explosion',
+      cost: 250,
+      count: 0,
+    },
+    {
+      id: 'undoMistake',
+      name: 'Mistake Undo',
+      desc: 'Undo 1 mistake',
+      cost: 75,
+      count: 0,
+    },
+    {
+      id: 'coinMultiplier',
+      name: 'Coin Multiplier',
+      desc: 'Double coins for 3 minutes',
+      cost: 300,
+      active: false,
+      activeUntil: 0,
+    },
+    {
+      id: 'extraLife',
+      name: 'Extra Life',
+      desc: 'One extra life',
+      cost: 400,
+      count: 0,
+    },
+    // NEW ITEMS
+    {
+      id: 'defuseSpeed',
+      name: 'Defuse Speed Boost',
+      desc: 'Reduce defuse time by 0.5 seconds (max 4)',
+      cost: 180,
+      bought: 0,
+      max: 4,
+      apply() {
+        defuseHoldTime = Math.max(700, 2000 + shopItems.find(i => i.id === 'extraDefuse').bought * 1000 - this.bought * 500);
+      }
+    },
+    {
+      id: 'coinBonus',
+      name: 'Coin Bonus',
+      desc: 'Gain +10 coins per defuse',
+      cost: 220,
+      bought: 0,
+      max: 5,
+      apply() {
+        // no special logic, handled on coin add
+      }
+    },
+    {
+      id: 'explosionRadius',
+      name: 'Explosion Radius Reduction',
+      desc: 'Reduce explosion trigger radius by 5 px (min 10px)',
+      cost: 300,
+      bought: 0,
+      max: 4,
+      apply() {
+        // handled on explosion radius check
+      }
+    },
+  ];
+
+  let showAllMines = false;
+  let shieldCount = 0;
+  let extraLives = 0;
+  let coinMultiplierActive = false;
+
+  const keys = {};
+
+  function distance(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  function resizeCanvas() {
+    const shopWidth = 280;
+    canvasWidth = window.innerWidth - shopWidth;
+    canvasHeight = window.innerHeight;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+  });
+
+  function generateMines() {
+    mines.length = 0;
+    while (mines.length < NUM_MINES) {
+      const x = Math.random() * (canvas.width - player.radius * 2) + player.radius;
+      const y = Math.random() * (canvas.height - player.radius * 2) + player.radius;
+
+      if (
+        mines.every(m => distance(m, {x,y}) > 30) &&
+        distance(player, {x,y}) > 100
+      ) {
+        mines.push({x, y, defused: false});
+      }
+    }
+  }
+
+  function movePlayer() {
+    if(gameEnded) return;
+    let dx = 0, dy = 0;
+    if(keys['arrowup'] || keys['w']) dy -= player.speed;
+    if(keys['arrowdown'] || keys['s']) dy += player.speed;
+    if(keys['arrowleft'] || keys['a']) dx -= player.speed;
+    if(keys['arrowright'] || keys['d']) dx += player.speed;
+
+    if(dx !== 0 && dy !== 0) {
+      dx *= Math.SQRT1_2;
+      dy *= Math.SQRT1_2;
+    }
+
+    player.x += dx;
+    player.y += dy;
+
+    player.x = Math.min(Math.max(player.radius, player.x), canvas.width - player.radius);
+    player.y = Math.min(Math.max(player.radius, player.y), canvas.height - player.radius);
+  }
+
+  function drawGroundDetails() {
+    ctx.fillStyle = '#cfc19e';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0; i<200; i++) {
+      const rx = (i * 37 + 11) % canvas.width;
+      const ry = ((i * 23) + 17) % canvas.height;
+      const size = (i % 3) + 2;
+      ctx.fillStyle = `rgba(110, 85, 40, ${0.05 + (i % 5)*0.03})`;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, size*1.2, size*0.6, (i % 360) * Math.PI / 180, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    for(let i=0; i<120; i++) {
+      const rx = (i * 47 + 13) % canvas.width;
+      const ry = ((i * 31) + 29) % canvas.height;
+      ctx.fillStyle = `rgba(90, 75, 60, ${0.2 + (i % 4)*0.1})`;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, 2, 1.3, (i % 360)*Math.PI/180, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawPlayer() {
+    const grad = ctx.createRadialGradient(player.x, player.y, player.radius / 3, player.x, player.y, player.radius);
+    grad.addColorStop(0, player.color);
+    grad.addColorStop(1, 'rgba(0,0,0,0.4)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw defuse progress ring if defusing
+    if(defuseInProgress && defuseMine) {
+      const elapsed = performance.now() - defuseStart;
+      const progress = Math.min(elapsed / defuseHoldTime, 1);
+      const angle = progress * Math.PI * 2;
+
+      ctx.strokeStyle = 'lime';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius + 8, -Math.PI / 2, -Math.PI / 2 + angle, false);
+      ctx.stroke();
+    }
+  }
+
+  function drawMines() {
+    const now = performance.now();
+    for(const mine of mines) {
+      if(mine.defused) {
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(mine.x, mine.y, 12, 0, Math.PI * 2);
+        ctx.fill();
+        continue;
+      }
+      const dist = distance(player, mine);
+      if(showAllMines || dist <= 25) {
+        const alpha = 0.25 + 0.4 * Math.sin(now / 200);
+        ctx.fillStyle = `rgba(255,0,0,${alpha.toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(mine.x, mine.y, 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function tryDefuse() {
+    if(gameEnded) return;
+    if(!keys[' ']) {
+      defuseInProgress = false;
+      defuseMine = null;
+      return;
+    }
+    const defuseRange = player.radius + 12;
+    const nearMine = mines.find(m => !m.defused && distance(player, m) <= defuseRange);
+    if(!nearMine) {
+      defuseInProgress = false;
+      defuseMine = null;
+      return;
+    }
+    if(!defuseInProgress || defuseMine !== nearMine) {
+      defuseInProgress = true;
+      defuseMine = nearMine;
+      defuseStart = performance.now();
+    }
+    const elapsed = performance.now() - defuseStart;
+    if(elapsed >= defuseHoldTime) {
+      defuseMine.defused = true;
+      minesDefused++;
+      // Calculate coin bonus (base 20 + per upgrades)
+      let coinReward = 20;
+      const coinBonusItem = shopItems.find(i => i.id === 'coinBonus');
+      if(coinBonusItem.bought > 0) coinReward += coinBonusItem.bought * 10;
+      if(coinMultiplierActive) coinReward *= 2;
+      coins += coinReward;
+      updateCoinsUI();
+      updateStatsUI();
+      defuseInProgress = false;
+      defuseMine = null;
+
+      generateMoreMinesIfNeeded();
+    }
+  }
+
+  function generateMoreMinesIfNeeded() {
+    if(mines.filter(m => !m.defused).length < 6) {
+      let newCount = 0;
+      while(newCount < 15) {
+        const x = Math.random() * (canvas.width - player.radius * 2) + player.radius;
+        const y = Math.random() * (canvas.height - player.radius * 2) + player.radius;
+        if(mines.every(m => distance(m, {x,y}) > 30) && distance(player, {x,y}) > 100) {
+          mines.push({x,y,defused:false});
+          newCount++;
+        }
+      }
+    }
+  }
+
+  // Explosion radius reduced by explosionRadius item
+  function getExplosionRadius() {
+    const explosionRadiusItem = shopItems.find(i => i.id === 'explosionRadius');
+    if(!explosionRadiusItem) return player.radius;
+    let baseRadius = player.radius;
+    const reduction = explosionRadiusItem.bought * 5;
+    return Math.max(10, baseRadius - reduction);
+  }
+
+  function checkMineExplosion() {
+    if(gameEnded) return;
+    const explosionRadius = getExplosionRadius();
+    for(const mine of mines) {
+      if(mine.defused) continue;
+      if(distance(player, mine) <= explosionRadius) {
+        if(shieldCount > 0) {
+          shieldCount--;
+          mine.defused = true;
+          showMessage('Shield used! Mine defused.');
+          updateStatsUI();
+          updateCoinsUI();
+          renderShop();
+          return;
+        }
+        if(extraLives > 0) {
+          extraLives--;
+          mine.defused = true;
+          showMessage('Extra life used! Mine defused.');
+          updateStatsUI();
+          updateCoinsUI();
+          renderShop();
+          return;
+        }
+        mistakes++;
+        updateStatsUI();
+        showMessage('💥 You stepped on a mine! Be careful.');
+        coins = Math.max(0, coins - 15);
+        updateCoinsUI();
+        renderShop();
+        mine.defused = true;
+        return;
+      }
+    }
+  }
+
+  function showMessage(msg) {
+    messageText.textContent = msg;
+    messageOverlay.classList.add('show');
+    setTimeout(() => {
+      messageOverlay.classList.remove('show');
+    }, 2000);
+  }
+
+  function hideMessage() {
+    messageOverlay.classList.remove('show');
+  }
+
+  function updateCoinsUI() {
+    coinsDisplay.textContent = `Coins: ${coins}`;
+  }
+  function updateStatsUI() {
+    minesDefusedSpan.textContent = minesDefused;
+    mistakesCountSpan.textContent = mistakes;
+  }
+  function updateTimeUI() {
+    const now = performance.now();
+    elapsedSeconds = (now - startTime) / 1000;
+    timeElapsedSpan.textContent = elapsedSeconds.toFixed(1);
+  }
+
+  function renderShop() {
+    itemsList.innerHTML = '';
+    shopItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'shopItem';
+
+      if(item.max && item.bought >= item.max) div.classList.add('disabled');
+      if(item.id === 'undoMistake' && (item.count <= 0 && mistakes <= 0)) div.classList.add('disabled');
+
+      const descDiv = document.createElement('div');
+      descDiv.className = 'desc';
+      let descText = item.desc;
+      if(item.count !== undefined) {
+        descText = `${item.name} - ${item.desc}`;
+      }
+      if(item.bought !== undefined && item.max) {
+        descText += ` (Owned: ${item.bought}/${item.max})`;
+      }
+      descDiv.textContent = descText;
+      div.appendChild(descDiv);
+
+      const costDiv = document.createElement('div');
+      costDiv.className = 'cost';
+      costDiv.textContent = `${item.cost} coins`;
+      div.appendChild(costDiv);
+
+      if(item.count !== undefined && item.count > 0) {
+        const countSpan = document.createElement('span');
+        countSpan.style.marginLeft = '8px';
+        countSpan.style.fontWeight = 'bold';
+        countSpan.style.color = 'gold';
+        countSpan.textContent = `x${item.count}`;
+        costDiv.appendChild(countSpan);
+      }
+
+      div.onclick = () => {
+        if(div.classList.contains('disabled')) return;
+        if(coins < item.cost) {
+          alert('Not enough coins!');
+          return;
+        }
+        if(item.id === 'undoMistake') {
+          if(mistakes > 0 && item.count > 0) {
+            mistakes--;
+            item.count--;
+            updateStatsUI();
+            updateCoinsUI();
+            renderShop();
+            return;
+          }
+        }
+        coins -= item.cost;
+
+        switch(item.id) {
+          case 'radarUpgrade':
+          case 'extraDefuse':
+            if(item.bought < item.max) {
+              item.bought++;
+              item.apply();
+            }
+            if(item.bought >= item.max) div.classList.add('disabled');
+            break;
+          case 'speedBoost':
+            if(!item.active) {
+              item.active = true;
+              item.activeUntil = performance.now() + 15000;
+              item.apply();
+              setTimeout(() => {
+                item.active = false;
+                item.apply();
+              }, 15000);
+            }
+            break;
+          case 'mineDetector':
+            if(!item.active) {
+              item.active = true;
+              showAllMines = true;
+              item.activeUntil = performance.now() + 5000;
+              setTimeout(() => {
+                item.active = false;
+                showAllMines = false;
+              }, 5000);
+            }
+            break;
+          case 'shield':
+            item.count++;
+            shieldCount++;
+            break;
+          case 'undoMistake':
+            item.count++;
+            break;
+          case 'coinMultiplier':
+            if(!item.active) {
+              item.active = true;
+              coinMultiplierActive = true;
+              item.activeUntil = performance.now() + 180000;
+              setTimeout(() => {
+                item.active = false;
+                coinMultiplierActive = false;
+              }, 180000);
+            }
+            break;
+          case 'extraLife':
+            item.count++;
+            extraLives++;
+            break;
+          case 'defuseSpeed':
+            if(item.bought < item.max) {
+              item.bought++;
+              item.apply();
+            }
+            if(item.bought >= item.max) div.classList.add('disabled');
+            break;
+          case 'coinBonus':
+            if(item.bought < item.max) {
+              item.bought++;
+              // No direct effect needed here; coins calculation uses it
+            }
+            if(item.bought >= item.max) div.classList.add('disabled');
+            break;
+          case 'explosionRadius':
+            if(item.bought < item.max) {
+              item.bought++;
+            }
+            if(item.bought >= item.max) div.classList.add('disabled');
+            break;
+        }
+        updateCoinsUI();
+        renderShop();
+      };
+
+      itemsList.appendChild(div);
+    });
+  }
+
+  function resetGame() {
+    coins = 0;
+    minesDefused = 0;
+    mistakes = 0;
+    shieldCount = 0;
+    extraLives = 0;
+    elapsedSeconds = 0;
+    startTime = performance.now();
+    gameEnded = false;
+    player.speed = player.baseSpeed;
+    defuseHoldTime = 2000;
+    defuseInProgress = false;
+    defuseMine = null;
+
+    shopItems.forEach(item => {
+      if(item.id === 'radarUpgrade' || item.id === 'extraDefuse' || item.id === 'defuseSpeed') {
+        item.bought = 0;
+        item.apply && item.apply();
+      } else if(item.id === 'speedBoost' || item.id === 'mineDetector' || item.id === 'coinMultiplier') {
+        item.active = false;
+      } else if(item.id === 'shield' || item.id === 'undoMistake' || item.id === 'extraLife') {
+        item.count = 0;
+      } else if(item.id === 'coinBonus' || item.id === 'explosionRadius') {
+        item.bought = 0;
+      }
+    });
+
+    player.x = canvas.width / 2;
+    player.y = canvas.height / 2;
+    player.color = playerColor;
+
+    generateMines();
+
+    updateCoinsUI();
+    updateStatsUI();
+    updateTimeUI();
+  }
+
+  function gameLoop() {
+    if(gameEnded) {
+      requestAnimationFrame(gameLoop);
+      return;
+    }
+
+    movePlayer();
+    tryDefuse();
+    checkMineExplosion();
+
+    drawGroundDetails();
+    drawMines();
+    drawPlayer();
+
+    updateTimeUI();
+
+    const speedItem = shopItems.find(i => i.id === 'speedBoost');
+    if(speedItem.active && performance.now() > speedItem.activeUntil) {
+      speedItem.active = false;
+      speedItem.apply();
+    }
+
+    const coinMult = shopItems.find(i => i.id === 'coinMultiplier');
+    if(coinMult.active && performance.now() > coinMult.activeUntil) {
+      coinMult.active = false;
+      coinMultiplierActive = false;
+    }
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  window.addEventListener('keydown', e => {
+    keys[e.key.toLowerCase()] = true;
+    if(e.key === ' ') e.preventDefault();
+  });
+  window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+  replayBtn.addEventListener('click', () => {
+    resetGame();
+    hideMessage();
+  });
+
+  colorOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      colorOptions.forEach(opt => opt.classList.remove('selected'));
+      option.classList.add('selected');
+      playerColor = option.getAttribute('data-color');
+    });
+  });
+  colorOptions[0].classList.add('selected');
+
+  startBtn.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    resetGame();
+    gameLoop();
+  });
+
+})();
+</script>
+
+</body>
+</html>
